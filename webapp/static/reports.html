@@ -667,9 +667,34 @@
         let activeSearch = "";
         let reportsById = {};
 
-        function init() {
-            // No API calls — just render the empty page
-            renderUI();
+        async function init() {
+            await loadReports();
+        }
+
+        async function loadReports() {
+            const container = document.getElementById("mainContainer");
+            container.innerHTML = `
+                <div class="loading-state">
+                    <div class="spinner"></div>
+                    <p>Loading report details & metadata...</p>
+                </div>
+            `;
+            try {
+                const res = await fetch("/api/reports/list");
+                if (!res.ok) {
+                    throw new Error(`Server returned ${res.status}`);
+                }
+                reportGroups = await res.json();
+                renderUI();
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = `
+                    <div class="status-banner">
+                        <span>Error loading reports: ${err.message}</span>
+                        <a href="javascript:void(0)" onclick="loadReports()" style="color: inherit; font-weight: bold; text-decoration: underline;">Retry</a>
+                    </div>
+                `;
+            }
         }
 
         function toggleGroup(groupId) {
@@ -736,13 +761,6 @@
             }
         }
 
-        function renderFormulas(data) {
-            const formulas = parseList(data);
-            if (formulas.length === 0) return '<span style="color:var(--muted); font-size:12px;">—</span>';
-
-            return formulas.map(f => `<div class="formula-block">${esc(f)}</div>`).join('<div style="height:4px"></div>');
-        }
-
         function openDetailModal(reportId) {
             const r = reportsById[reportId];
             if (!r) return;
@@ -751,32 +769,18 @@
             const rName = cleanHex(r.name || r.Name || r["Report Name"] || "Unnamed Report");
             document.getElementById("modalReportTitle").textContent = `${rName} (ID ${r.id || r.ID || "—"})`;
 
+            const dims = r.dimensions || r.Dimensions || [];
+            const measures = r.measures || r.Measures || [];
+
             const body = document.getElementById("modalBody");
             body.innerHTML = `
                 <div class="modal-section">
-                    <div class="modal-section-title">Dimensions</div>
-                    ${renderPills(r["Dimensions"], "pill-dim", 100)}
+                    <div class="modal-section-title">Dimensions (${dims.length})</div>
+                    ${renderPills(dims, "pill-dim", 100)}
                 </div>
                 <div class="modal-section">
-                    <div class="modal-section-title">Measures</div>
-                    ${renderPills(r["Measures"], "pill-measure", 100)}
-                </div>
-                <div class="modal-section">
-                    <div class="modal-section-title">Variables</div>
-                    ${renderPills(r["Variable Name"], "pill-var", 100)}
-                </div>
-                <div class="modal-section">
-                    <div class="modal-section-title">Variable Formulas</div>
-                    ${renderFormulas(r["Variable Formula"])}
-                </div>
-                <div class="modal-section">
-                    <div class="modal-section-title">Source Universe / Connections</div>
-                    ${renderPills(r["Source Universe/Connections"], "pill-tag", 100)}
-                </div>
-                <div class="modal-section">
-                    <div class="modal-section-title">Filters &amp; Prompts</div>
-                    <div style="margin-bottom:8px;"><b>Filters:</b> ${renderPills(r["Filters"], "pill-filter", 100)}</div>
-                    <div><b>Prompts:</b> ${renderPills(r["Prompts"], "pill-filter", 100)}</div>
+                    <div class="modal-section-title">Measures (${measures.length})</div>
+                    ${renderPills(measures, "pill-measure", 100)}
                 </div>
             `;
 
@@ -799,25 +803,27 @@
                             <path d="M9 9h6M9 13h6"/>
                         </svg>
                         <h3>Reports Inventory</h3>
-                        <p>Report details will be displayed here once data is loaded.</p>
+                        <p>No report details found.</p>
                     </div>
                 `;
                 return;
             }
 
             let html = "";
+            let totalRenderedGroups = 0;
             reportsById = {};
 
             for (const key of groupKeys) {
                 const reports = reportGroups[key] || [];
 
                 const filtered = reports.filter(r => {
-                    const name = cleanHex(r.name || r.Name || "").toLowerCase();
-                    const id = String(r.id || r.ID || "").toLowerCase();
+                    const name = cleanHex(r.name || r.Name || r["Report Name"] || "").toLowerCase();
+                    const id = String(r.id || r.ID || r["Report ID"] || "").toLowerCase();
                     return name.includes(activeSearch) || id.includes(activeSearch);
                 });
 
                 if (filtered.length === 0) continue;
+                totalRenderedGroups++;
 
                 filtered.forEach(r => {
                     const rid = r.id || r.ID || r["Report ID"];
@@ -825,9 +831,10 @@
                 });
 
                 const safeKeyId = key.replace(/\s+/g, "-");
+                const isExpanded = activeSearch !== "" ? "expanded" : "";
 
                 html += `
-                    <div class="accordion-item" id="group-${safeKeyId}">
+                    <div class="accordion-item ${isExpanded}" id="group-${safeKeyId}">
                         <button class="accordion-header" onclick="toggleGroup('${safeKeyId}')">
                             <span class="accordion-title">
                                 ${esc(key)}
@@ -844,8 +851,6 @@
                                             <th>Report ID</th>
                                             <th>Dimensions</th>
                                             <th>Measures</th>
-                                            <th>Variable Name</th>
-                                            <th>Variable Formula</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -853,14 +858,15 @@
                                         ${filtered.map(r => {
                                             const rName = cleanHex(r.name || r.Name || r["Report Name"] || "Unnamed Report");
                                             const rId = r.id || r.ID || r["Report ID"] || "\u2014";
+                                            const dims = r.dimensions || r.Dimensions || [];
+                                            const measures = r.measures || r.Measures || [];
+
                                             return `
                                                 <tr class="report-row">
                                                     <td class="report-name-cell">${esc(rName)}</td>
                                                     <td class="report-id-cell">${esc(rId)}</td>
-                                                    <td>${renderPills(r["Dimensions"], "pill-dim", 3)}</td>
-                                                    <td>${renderPills(r["Measures"], "pill-measure", 3)}</td>
-                                                    <td>${renderPills(r["Variable Name"], "pill-var", 3)}</td>
-                                                    <td>${renderFormulas(r["Variable Formula"])}</td>
+                                                    <td>${renderPills(dims, "pill-dim", 3)}</td>
+                                                    <td>${renderPills(measures, "pill-measure", 3)}</td>
                                                     <td>
                                                         <button class="btn-view-details" onclick="openDetailModal('${esc(rId)}')">🔍 Details</button>
                                                     </td>
@@ -875,12 +881,16 @@
                 `;
             }
 
-            container.innerHTML = html || `
-                <div class="empty-state">
-                    <h3>No reports found</h3>
-                    <p>No reports match your search query.</p>
-                </div>
-            `;
+            if (totalRenderedGroups === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No reports found</h3>
+                        <p>${activeSearch ? 'No reports match your search query.' : 'There are no reports loaded in the environment yet.'}</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = html;
+            }
         }
 
         function esc(str) {

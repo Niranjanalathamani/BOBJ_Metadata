@@ -25,6 +25,8 @@ from modules import reports
 from modules import publications
 from modules import schedules
 from modules import inventory
+from modules import metadata
+from modules import report_details
 
 from threading import Lock
 import io
@@ -256,6 +258,30 @@ def api_reports():
     except Exception as exc:  # noqa: BLE001
         return error_response(exc)
 
+
+@app.route("/api/reports/metadata")
+def api_reports_metadata():
+    """Fetch $metadata (dimensions & measures) for all WebI documents."""
+    try:
+        session = get_session()
+        results = metadata.get_all_metadata(session)
+        return jsonify(results)
+    except Exception as exc:
+        import traceback
+        traceback.print_exc()
+        return error_response(exc)
+
+
+@app.route("/api/reports/list")
+def api_reports_list():
+    """Fetch report inventory grouped by type with WebI metadata."""
+    try:
+        session = get_session()
+        return jsonify(report_details.get_report_list(session))
+    except Exception as exc:
+        import traceback
+        traceback.print_exc()
+        return error_response(exc)
 
 
 if __name__ == "__main__":

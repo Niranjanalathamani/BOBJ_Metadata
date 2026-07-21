@@ -11,7 +11,7 @@ from utils.infostore import run_paginated_cmsquery
 
 def _fetch_by_kind(session, si_kind: str) -> list[dict]:
     """Run a paginated CMS query for a given SI_KIND and normalize results."""
-    query = f"SELECT SI_ID, SI_NAME, SI_KIND FROM CI_INFOOBJECTS WHERE SI_KIND='{si_kind}' AND SI_INSTANCE = 0"
+    query = f"SELECT SI_ID, SI_NAME, SI_KIND FROM CI_INFOOBJECTS WHERE SI_KIND='{si_kind}'AND SI_INSTANCE=0 "
     docs = []
     try:
         entries = run_paginated_cmsquery(session, query)

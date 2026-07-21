@@ -5,6 +5,12 @@ Handles SAP BusinessObjects (BOBJ) login and logout via REST API.
 Stores the session token used by all other modules.
 """
 
+from itsdangerous import url_safe
+from itsdangerous import url_safe
+from itsdangerous import url_safe
+from itsdangerous import url_safe
+from itsdangerous import url_safe
+from werkzeug.datastructures import headers
 import requests
 from xml.etree import ElementTree as ET
 
@@ -163,3 +169,5 @@ def _escape(value: str) -> str:
         .replace('"', "&quot;")
         .replace("'", "&apos;")
     )
+ 
+   
