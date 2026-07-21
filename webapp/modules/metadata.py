@@ -19,6 +19,8 @@ import xml.etree.ElementTree as ET
 
 from config import BOBJ_BASE_URL
 from utils.infostore import run_paginated_cmsquery
+# from modules.dataprovider import fetch_dataproviders
+# from modules.variables import fetch_variables
 
 
 # ============================================
@@ -199,6 +201,9 @@ def fetch_webi_documents(session):
     return docs
 
 
+from modules.datafilters import fetch_doc_filters
+
+
 # ============================================
 # GET ALL METADATA (MAIN ENTRY POINT)
 # ============================================
@@ -206,7 +211,7 @@ def fetch_webi_documents(session):
 def get_all_metadata(session):
     """
     Loop through every WebI document on the platform, fetch its
-    $metadata, and return a list of dicts:
+    $metadata (dimensions & measures) and datafilters, and return a list of dicts:
 
         [
             {
@@ -215,6 +220,7 @@ def get_all_metadata(session):
                 "cuid":       "AVEwPE0l...",
                 "dimensions": ["Country", "Product", ...],
                 "measures":   ["Revenue", "Quantity", ...],
+                "filters":    ["[Product Category] InList (Home Theater)"]
             },
             ...
         ]
@@ -223,28 +229,31 @@ def get_all_metadata(session):
     documents = fetch_webi_documents(session)
 
     print(f"[METADATA] Found {len(documents)} WebI documents. "
-          f"Fetching metadata for each...")
+          f"Fetching metadata and filters for each...")
 
     results = []
 
     for idx, doc in enumerate(documents, start=1):
 
         cuid = doc.get("cuid")
+        doc_id = doc.get("id")
 
         print(f"[METADATA] ({idx}/{len(documents)}) "
-              f"{doc['name']} (cuid={cuid})")
+              f"{doc['name']} (cuid={cuid}, id={doc_id})")
 
         dims, measures = fetch_dimensions_measures(session, cuid)
+        filters = fetch_doc_filters(session, doc_id)
 
         results.append({
-            "id":         doc["id"],
-            "name":       doc["name"],
-            "cuid":       cuid,
-            "dimensions": dims,
-            "measures":   measures,
+            "id":            doc_id,
+            "name":          doc["name"],
+            "cuid":          cuid,
+            "dimensions":    dims,
+            "measures":      measures,
+            "filters":       filters,
         })
 
-    print(f"[METADATA] Done — collected metadata for "
+    print(f"[METADATA] Done — collected metadata and filters for "
           f"{len(results)} documents.")
 
     return results

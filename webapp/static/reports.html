@@ -761,6 +761,12 @@
             }
         }
 
+        function renderFormulas(data) {
+            const formulas = parseList(data);
+            if (formulas.length === 0) return '<span style="color:var(--muted); font-size:12px;">—</span>';
+            return formulas.map(f => `<div class="formula-block">${esc(f)}</div>`).join('<div style="height:4px"></div>');
+        }
+
         function openDetailModal(reportId) {
             const r = reportsById[reportId];
             if (!r) return;
@@ -771,6 +777,7 @@
 
             const dims = r.dimensions || r.Dimensions || [];
             const measures = r.measures || r.Measures || [];
+            const filters = r.filters || r.Filters || [];
 
             const body = document.getElementById("modalBody");
             body.innerHTML = `
@@ -781,6 +788,10 @@
                 <div class="modal-section">
                     <div class="modal-section-title">Measures (${measures.length})</div>
                     ${renderPills(measures, "pill-measure", 100)}
+                </div>
+                <div class="modal-section">
+                    <div class="modal-section-title">Filters (${filters.length})</div>
+                    ${renderPills(filters, "pill-filter", 100)}
                 </div>
             `;
 
@@ -851,6 +862,7 @@
                                             <th>Report ID</th>
                                             <th>Dimensions</th>
                                             <th>Measures</th>
+                                            <th>Filters</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -860,6 +872,7 @@
                                             const rId = r.id || r.ID || r["Report ID"] || "\u2014";
                                             const dims = r.dimensions || r.Dimensions || [];
                                             const measures = r.measures || r.Measures || [];
+                                            const filters = r.filters || r.Filters || [];
 
                                             return `
                                                 <tr class="report-row">
@@ -867,6 +880,7 @@
                                                     <td class="report-id-cell">${esc(rId)}</td>
                                                     <td>${renderPills(dims, "pill-dim", 3)}</td>
                                                     <td>${renderPills(measures, "pill-measure", 3)}</td>
+                                                    <td>${renderPills(filters, "pill-filter", 3)}</td>
                                                     <td>
                                                         <button class="btn-view-details" onclick="openDetailModal('${esc(rId)}')">🔍 Details</button>
                                                     </td>

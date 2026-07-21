@@ -27,6 +27,8 @@ from modules import schedules
 from modules import inventory
 from modules import metadata
 from modules import report_details
+from modules import datafilters
+
 
 from threading import Lock
 import io
@@ -282,6 +284,14 @@ def api_reports_list():
         import traceback
         traceback.print_exc()
         return error_response(exc)
+
+# @app.route("/api/reports/dataproviders")
+# def api_report_dataproviders():
+#     try:
+#         session = get_session()
+#         return jsonify(dataprovider.get_all_dataproviders(session))
+#     except Exception as exc:
+#         return error_response(exc)
 
 
 if __name__ == "__main__":

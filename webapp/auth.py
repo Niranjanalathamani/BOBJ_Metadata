@@ -56,6 +56,9 @@ class BOBJSession:
             headers=headers,
             timeout=30,
         )
+        print("Status:", response.status_code)
+        print("Response Body:")
+        print(response.text)
 
         response.raise_for_status()
 
