@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebI Report Details</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --navy: #16324F;
+            --blue: #2A5C8A;
+            --blue-light: #EAF1F8;
+            --bg: #F4F6F9;
+            --card: #FFFFFF;
+            --border: #E2E8F0;
+            --text: #1F2937;
+            --muted: #64748B;
+            --amber: #B5790A;
+            --amber-bg: #FDF3E2;
+            --shadow: 0 1px 2px rgba(16, 32, 55, 0.06), 0 4px 16px rgba(16, 32, 55, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            background: linear-gradient(135deg, var(--navy), var(--blue));
+            color: #fff;
+            padding: 20px 28px;
+            box-shadow: 0 2px 12px rgba(16, 32, 55, 0.18);
+        }
+
+        .topbar-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .topbar-inner h1 {
+            font-family: 'Sora', sans-serif;
+            font-size: 19px;
+            margin: 0;
+        }
+
+        .topbar-inner p {
+            margin: 2px 0 0;
+            font-size: 12px;
+            color: #CFE0F2;
+            font-weight: 500;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            color: #fff;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.22);
+        }
+
+        .toolbar {
+            max-width: 1400px;
+            margin: 20px auto 0;
+            padding: 0 28px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-wrap {
+            position: relative;
+            flex: 1;
+            min-width: 220px;
+        }
+
+        .search-wrap svg {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: .45;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 10px 14px 10px 38px;
+            border-radius: 9px;
+            border: 1px solid var(--border);
+            background: var(--card);
+            font-size: 14px;
+            font-family: inherit;
+            box-shadow: var(--shadow);
+            outline: none;
+        }
+
+        #searchInput:focus {
+            border-color: var(--blue);
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border-radius: 9px;
+            border: none;
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .btn-primary {
+            background: var(--blue);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: var(--navy);
+        }
+
+        .btn-primary:disabled {
+            background: #9DB6CB;
+            cursor: not-allowed;
+        }
+
+        .btn-outline {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-outline:hover {
+            background: var(--blue-light);
+        }
+
+        .status-pill {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            padding: 9px 14px;
+            font-size: 12.5px;
+            color: var(--muted);
+            font-weight: 600;
+            box-shadow: var(--shadow);
+        }
+
+        .status-pill b {
+            color: var(--navy);
+        }
+
+        .status-pill.running {
+            color: var(--amber);
+        }
+
+        .progress-wrap {
+            max-width: 1400px;
+            margin: 14px auto 0;
+            padding: 0 28px;
+            display: none;
+        }
+
+        .progress-bar-track {
+            background: var(--border);
+            border-radius: 20px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            background: var(--blue);
+            height: 100%;
+            width: 0%;
+            transition: width .3s ease;
+        }
+
+        .progress-label {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 6px;
+        }
+
+        .filter-banner {
+            max-width: 1400px;
+            margin: 14px auto 0;
+            padding: 10px 28px;
+            display: none;
+        }
+
+        .filter-banner-inner {
+            background: var(--blue-light);
+            border: 1px solid #C9DDEF;
+            color: var(--navy);
+            border-radius: 9px;
+            padding: 10px 16px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .filter-banner-inner a {
+            color: var(--blue);
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .filter-banner-inner a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px 28px 60px;
+        }
+
+        .table-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            overflow: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1100px;
+        }
+
+        thead th {
+            position: sticky;
+            top: 0;
+            background: var(--navy);
+            color: #fff;
+            text-align: left;
+            font-size: 11.5px;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            padding: 12px 14px;
+            white-space: nowrap;
+        }
+
+        tbody td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13.5px;
+            vertical-align: top;
+            max-width: 280px;
+        }
+
+        tbody tr:hover {
+            background: #FAFBFD;
+        }
+
+        /* Pills & Badges System */
+        .pills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .pill-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11.5px;
+            font-weight: 500;
+            line-height: 1.3;
+            white-space: normal;
+            word-break: break-word;
+            border: 1px solid transparent;
+        }
+
+        .pill-dim {
+            background-color: #EFF6FF;
+            color: #1D4ED8;
+            border-color: #BFDBFE;
+        }
+
+        .pill-measure {
+            background-color: #ECFDF5;
+            color: #047857;
+            border-color: #A7F3D0;
+        }
+
+        .pill-var {
+            background-color: #F5F3FF;
+            color: #6D28D9;
+            border-color: #DDD6FE;
+        }
+
+        .pill-filter {
+            background-color: #FFFBEB;
+            color: #B45309;
+            border-color: #FDE68A;
+        }
+
+        .pill-more {
+            background-color: #F3F4F6;
+            color: #4B5563;
+            border-color: #E5E7EB;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.15s ease;
+        }
+
+        .pill-more:hover {
+            background-color: #E5E7EB;
+            color: #1F2937;
+        }
+
+        .formula-block {
+            font-family: 'SFMono-Regular', Consolas, monospace;
+            font-size: 11.5px;
+            background: #F8FAFC;
+            color: #0F172A;
+            border: 1px solid #E2E8F0;
+            border-left: 3px solid #2A5C8A;
+            padding: 5px 8px;
+            border-radius: 5px;
+            word-break: break-all;
+            max-height: 90px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            line-height: 1.4;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 70px 20px;
+            color: var(--muted);
+        }
+
+        .empty-state svg {
+            opacity: .35;
+            margin-bottom: 12px;
+        }
+
+        /* ── Batch Navigation Bar ──────────────────────────────── */
+        .batch-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 4px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .batch-nav-info {
+            font-size: 13.5px;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .batch-nav-info b {
+            color: var(--navy);
+        }
+
+        .batch-nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .batch-btn {
+            padding: 9px 18px;
+            border-radius: 9px;
+            border: 1px solid var(--border);
+            background: var(--card);
+            cursor: pointer;
+            font-size: 13.5px;
+            font-weight: 600;
+            font-family: inherit;
+            color: var(--text);
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .batch-btn:hover:not(:disabled) {
+            background: var(--blue-light);
+            border-color: var(--blue);
+            color: var(--blue);
+        }
+
+        .batch-btn:disabled {
+            opacity: .4;
+            cursor: not-allowed;
+        }
+
+        .batch-btn.active {
+            background: var(--blue);
+            color: #fff;
+            border-color: var(--blue);
+        }
+
+        .batch-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .batch-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .batch-dot.cached {
+            background: #34D399;
+        }
+
+        .batch-dot.current {
+            background: var(--blue);
+            box-shadow: 0 0 0 3px rgba(42, 92, 138, 0.2);
+        }
+
+        .batch-dot.running {
+            background: var(--amber);
+            animation: blink 1s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* ── Pagination (for rows within a batch) ────────────── */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 4px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .page-btn {
+            padding: 7px 12px;
+            border-radius: 7px;
+            border: 1px solid var(--border);
+            background: var(--card);
+            cursor: pointer;
+            font-size: 13px;
+            font-family: inherit;
+        }
+
+        .page-btn:disabled {
+            opacity: .4;
+            cursor: not-allowed;
+        }
+
+        .page-info {
+            font-size: 13px;
+            color: var(--muted);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="topbar">
+        <div class="topbar-inner">
+            <div>
+                <h1>WebI Report Details</h1>
+                <p>Result objects, filters & variables across all Web Intelligence reports</p>
+            </div>
+            <button class="back-btn" onclick="history.back()">← Back to Overview</button>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <div class="search-wrap">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <circle cx="11" cy="11" r="7" />
+                <path d="M21 21l-4.3-4.3" />
+            </svg>
+            <input type="text" id="searchInput" placeholder="Search by report name, variable, or field…"
+                oninput="onSearch()">
+        </div>
+        <div class="status-pill" id="statusPill">Checking status…</div>
+        <button class="btn btn-primary" id="refreshBtn" onclick="triggerRefresh()">↻ Refresh Data</button>
+        <button class="btn btn-outline" id="exportBtn" onclick="exportExcel()">⬇ Export to Excel</button>
+    </div>
+
+    <div class="progress-wrap" id="progressWrap">
+        <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-label" id="progressLabel">Starting crawl…</div>
+    </div>
+
+    <div class="filter-banner" id="filterBanner">
+        <div class="filter-banner-inner">
+            <span>Filtered to report: <b id="filterBannerText"></b></span>
+            <a onclick="clearFilter()">Clear filter</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Batch Navigation -->
+        <div class="batch-nav" id="batchNav" style="display:none;">
+            <div class="batch-nav-info" id="batchNavInfo"></div>
+            <div class="batch-nav-controls">
+                <button class="batch-btn" id="prevBatchBtn" onclick="changeBatch(-1)">← Previous 100</button>
+                <div class="batch-indicator" id="batchIndicator"></div>
+                <button class="batch-btn" id="nextBatchBtn" onclick="changeBatch(1)">Next 100 →</button>
+            </div>
+        </div>
+
+        <div class="table-card">
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>Report Name</th>
+                        <th>Result Objects</th>
+                        <th>Source Universe / Connections</th>
+                        <th>Filters</th>
+                        <th>Prompts</th>
+                        <th>Variable Name</th>
+                        <th>Variable Formula</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+            <div class="empty-state" id="emptyState" style="display:none;">
+                <div>No data yet. Click <b>Refresh Data</b> to crawl the first 100 WebI reports.</div>
+            </div>
+        </div>
+
+        <div class="pagination" id="pagination" style="display:none;">
+            <div class="page-info" id="pageInfo"></div>
+            <div class="pagination-controls">
+                <button class="page-btn" id="prevBtn" onclick="changePage(-1)">Previous</button>
+                <button class="page-btn" id="nextBtn" onclick="changePage(1)">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const PAGE_SIZE = 50;       // rows per table page (within a batch)
+        const BATCH_SIZE = 100;     // reports per batch (must match server)
+
+        let totalReports = 0;       // total WebI docs on server
+        let currentBatch = 0;       // which batch (0-indexed) we're viewing
+        let batchRows = [];         // rows for the currently displayed batch
+        let filteredRows = [];      // after search filter
+        let currentPage = 1;
+        let pollTimer = null;
+        let cachedBatches = new Set();  // which batches are already crawled
+
+        function getQueryParam(name) {
+            return new URLSearchParams(window.location.search).get(name);
+        }
+
+        async function init() {
+            const reportParam = getQueryParam("report");
+            if (reportParam) {
+                document.getElementById("searchInput").value = reportParam;
+                showFilterBanner(reportParam);
+            }
+
+            // 1) Get the total count first (lightweight)
+            try {
+                const res = await fetch("/api/webi-details/total");
+                const data = await res.json();
+                totalReports = data.total || 0;
+            } catch (e) {
+                console.error("Failed to get total:", e);
+            }
+
+            // 2) Check current server state (any running crawl? any cached batches?)
+            await refreshStatusAndData();
+
+            if (reportParam) onSearch();
+        }
+
+        async function refreshStatusAndData() {
+            const state = await fetchStatus();
+            updateStatusUI(state);
+
+            // Track which batches are cached
+            if (state.cached_batches) {
+                cachedBatches = new Set(state.cached_batches);
+            }
+
+            if (state.status === "running") {
+                // A crawl is running — poll until it finishes
+                currentBatch = state.current_batch >= 0 ? state.current_batch : 0;
+                startPolling();
+            } else {
+                // Try to load the current batch if it's cached
+                if (cachedBatches.has(currentBatch)) {
+                    await loadBatchData(currentBatch);
+                } else if (cachedBatches.size > 0) {
+                    // Show the first cached batch
+                    currentBatch = Math.min(...cachedBatches);
+                    await loadBatchData(currentBatch);
+                }
+                setControlsEnabled(true);
+            }
+
+            updateBatchNav();
+        }
+
+        async function fetchStatus() {
+            const res = await fetch("/api/webi-details/status");
+            return res.json();
+        }
+
+        function updateStatusUI(state) {
+            const pill = document.getElementById("statusPill");
+            const progressWrap = document.getElementById("progressWrap");
+
+            if (state.status === "running") {
+                pill.textContent = `Crawling batch ${state.current_batch + 1}…`;
+                pill.classList.add("running");
+                progressWrap.style.display = "block";
+                const pct = state.batch_total ? Math.round((state.processed / state.batch_total) * 100) : 0;
+                document.getElementById("progressFill").style.width = pct + "%";
+                document.getElementById("progressLabel").textContent =
+                    `${state.processed} / ${state.batch_total} documents processed (${pct}%)`;
+                document.getElementById("refreshBtn").disabled = true;
+            } else {
+                pill.classList.remove("running");
+                progressWrap.style.display = "none";
+                document.getElementById("refreshBtn").disabled = false;
+                if (state.row_count > 0 && state.last_updated) {
+                    const batchCount = (state.cached_batches || []).length;
+                    pill.innerHTML = `<b>${state.row_count}</b> rows · ${batchCount} batch(es) · updated ${formatTime(state.last_updated)}`;
+                } else if (state.status === "error") {
+                    pill.textContent = "Last crawl failed: " + (state.error || "unknown error");
+                } else {
+                    pill.textContent = totalReports > 0
+                        ? `${totalReports} reports found — click Refresh to start`
+                        : "No data yet";
+                }
+            }
+        }
+
+        function formatTime(iso) {
+            try {
+                const d = new Date(iso);
+                return d.toLocaleString();
+            } catch (e) { return iso; }
+        }
+
+        function startPolling() {
+            setControlsEnabled(false);
+            if (pollTimer) return;
+            pollTimer = setInterval(async () => {
+                const state = await fetchStatus();
+                updateStatusUI(state);
+                if (state.cached_batches) {
+                    cachedBatches = new Set(state.cached_batches);
+                }
+                if (state.status !== "running") {
+                    clearInterval(pollTimer);
+                    pollTimer = null;
+                    // Load the batch that just finished
+                    if (cachedBatches.has(currentBatch)) {
+                        await loadBatchData(currentBatch);
+                    }
+                    setControlsEnabled(true);
+                    updateBatchNav();
+                    const reportParam = getQueryParam("report");
+                    if (reportParam) onSearch();
+                }
+            }, 1500);
+        }
+
+        function setControlsEnabled(enabled) {
+            document.getElementById("refreshBtn").disabled = !enabled;
+        }
+
+        async function triggerRefresh() {
+            document.getElementById("refreshBtn").disabled = true;
+            // If current batch is already cached, try the next uncached one
+            let batchToRefresh = currentBatch;
+            if (cachedBatches.has(batchToRefresh)) {
+                // Find the first uncached batch
+                const totalBatches = Math.ceil(totalReports / BATCH_SIZE);
+                for (let i = 0; i < totalBatches; i++) {
+                    if (!cachedBatches.has(i)) {
+                        batchToRefresh = i;
+                        break;
+                    }
+                }
+            }
+            currentBatch = batchToRefresh;
+            await fetch(`/api/webi-details/batch?batch=${currentBatch}`, { method: "POST" });
+            const state = await fetchStatus();
+            updateStatusUI(state);
+            updateBatchNav();
+            startPolling();
+        }
+
+        async function loadBatchData(batchIndex) {
+            const res = await fetch(`/api/webi-details/batch?batch=${batchIndex}`);
+            const data = await res.json();
+            batchRows = data.rows || [];
+            filteredRows = batchRows;
+            currentPage = 1;
+            renderTable();
+            updateBatchNav();
+        }
+
+        async function changeBatch(delta) {
+            const newBatch = currentBatch + delta;
+            const totalBatches = Math.ceil(totalReports / BATCH_SIZE);
+            if (newBatch < 0 || newBatch >= totalBatches) return;
+
+            currentBatch = newBatch;
+            updateBatchNav();
+
+            if (cachedBatches.has(newBatch)) {
+                // Instant — already crawled
+                await loadBatchData(newBatch);
+            } else {
+                // Trigger crawl for this batch
+                batchRows = [];
+                filteredRows = [];
+                renderTable();
+                await fetch(`/api/webi-details/batch?batch=${newBatch}`, { method: "POST" });
+                const state = await fetchStatus();
+                updateStatusUI(state);
+                startPolling();
+            }
+        }
+
+        function updateBatchNav() {
+            const nav = document.getElementById("batchNav");
+            const totalBatches = Math.ceil(totalReports / BATCH_SIZE);
+
+            if (totalReports <= 0) {
+                nav.style.display = "none";
+                return;
+            }
+
+            nav.style.display = "flex";
+
+            // Info text
+            const start = currentBatch * BATCH_SIZE + 1;
+            const end = Math.min((currentBatch + 1) * BATCH_SIZE, totalReports);
+            document.getElementById("batchNavInfo").innerHTML =
+                `Showing reports <b>${start}–${end}</b> of <b>${totalReports}</b>`;
+
+            // Prev / Next buttons
+            document.getElementById("prevBatchBtn").disabled = currentBatch <= 0;
+            document.getElementById("nextBatchBtn").disabled = currentBatch >= totalBatches - 1;
+
+            // Batch dots
+            const indicator = document.getElementById("batchIndicator");
+            let dots = "";
+            for (let i = 0; i < totalBatches; i++) {
+                let cls = "batch-dot";
+                if (cachedBatches.has(i)) cls += " cached";
+                if (i === currentBatch) cls += " current";
+                // Check if this batch is currently being crawled
+                if (i === currentBatch && pollTimer) cls += " running";
+                const label = `Batch ${i + 1}: reports ${i * BATCH_SIZE + 1}–${Math.min((i + 1) * BATCH_SIZE, totalReports)}`;
+                dots += `<div class="${cls}" title="${label}"></div>`;
+            }
+            indicator.innerHTML = dots;
+        }
+
+        function onSearch() {
+            const term = document.getElementById("searchInput").value.trim().toLowerCase();
+            filteredRows = !term ? batchRows : batchRows.filter(r =>
+                [r["Report Name"], r["Result Objects"], r["Variable Name"], r["Variable Formula"], r["Filters"]]
+                    .some(v => (v || "").toString().toLowerCase().includes(term))
+            );
+            currentPage = 1;
+            renderTable();
+        }
+
+        function showFilterBanner(text) {
+            document.getElementById("filterBannerText").textContent = text;
+            document.getElementById("filterBanner").style.display = "block";
+        }
+
+        function clearFilter() {
+            document.getElementById("searchInput").value = "";
+            document.getElementById("filterBanner").style.display = "none";
+            const url = new URL(window.location);
+            url.searchParams.delete("report");
+            window.history.replaceState({}, "", url);
+            onSearch();
+        }
+
+        function cleanHex(str) {
+            if (!str) return "";
+            return String(str).replace(/_x([0-9a-fA-F]{4})_/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
+        }
+
+        function parseList(val) {
+            if (!val) return [];
+            if (Array.isArray(val)) {
+                return val.map(v => cleanHex(v)).filter(Boolean);
+            }
+            const cleanStr = cleanHex(val);
+            return cleanStr.split(/,\s*/).map(s => s.trim()).filter(Boolean);
+        }
+
+        function renderPills(data, pillClass, maxVisible = 3) {
+            const items = parseList(data);
+            if (items.length === 0) return '<span style="color:var(--muted); font-size:12px;">—</span>';
+
+            const visibleItems = items.slice(0, maxVisible);
+            const hiddenItems = items.slice(maxVisible);
+
+            let html = `<div class="pills-container">`;
+            visibleItems.forEach(item => {
+                html += `<span class="pill-tag ${pillClass}">${esc(item)}</span>`;
+            });
+
+            if (hiddenItems.length > 0) {
+                const uid = 'more-' + Math.random().toString(36).substr(2, 9);
+                html += `<span class="pill-tag pill-more" id="${uid}-btn" onclick="toggleMorePills('${uid}')">+${hiddenItems.length} more</span>`;
+                html += `<span id="${uid}-extra" style="display:none;" class="pills-container">`;
+                hiddenItems.forEach(item => {
+                    html += `<span class="pill-tag ${pillClass}">${esc(item)}</span>`;
+                });
+                html += `</span>`;
+            }
+            html += `</div>`;
+            return html;
+        }
+
+        function toggleMorePills(uid) {
+            const extra = document.getElementById(uid + '-extra');
+            const btn = document.getElementById(uid + '-btn');
+            if (extra) {
+                extra.style.display = 'inline-flex';
+                extra.style.flexWrap = 'wrap';
+                extra.style.gap = '4px';
+            }
+            if (btn) {
+                btn.style.display = 'none';
+            }
+        }
+
+        function renderFormulas(data) {
+            const formulas = parseList(data);
+            if (formulas.length === 0) return '<span style="color:var(--muted); font-size:12px;">—</span>';
+
+            return formulas.map(f => `<div class="formula-block">${esc(f)}</div>`).join('<div style="height:4px"></div>');
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById("tableBody");
+            const emptyState = document.getElementById("emptyState");
+            const pagination = document.getElementById("pagination");
+
+            if (filteredRows.length === 0) {
+                tbody.innerHTML = "";
+                emptyState.style.display = "block";
+                emptyState.querySelector("div").innerHTML = batchRows.length
+                    ? "No rows match your search."
+                    : "No data yet. Click <b>Refresh Data</b> to crawl the first 100 WebI reports.";
+                pagination.style.display = "none";
+                return;
+            }
+
+            emptyState.style.display = "none";
+            pagination.style.display = "flex";
+
+            const totalPages = Math.ceil(filteredRows.length / PAGE_SIZE);
+            currentPage = Math.min(currentPage, totalPages) || 1;
+            const start = (currentPage - 1) * PAGE_SIZE;
+            const pageRows = filteredRows.slice(start, start + PAGE_SIZE);
+
+            tbody.innerHTML = pageRows.map(r => {
+                const rName = cleanHex(r["Report Name"] || "Unnamed Report");
+                const rId = r["Report ID"] || "—";
+
+                return `
+                    <tr>
+                        <td><b>${esc(rName)}</b><div class="mono">ID ${esc(rId)}</div></td>
+                        <td>${renderPills(r["Result Objects"], "pill-dim", 3)}</td>
+                        <td>${renderPills(r["Source Universe/Connections"], "pill-tag", 2)}</td>
+                        <td>${renderPills(r["Filters"], "pill-filter", 2)}</td>
+                        <td>${renderPills(r["Prompts"], "pill-filter", 2)}</td>
+                        <td>${renderPills(r["Variable Name"], "pill-var", 3)}</td>
+                        <td>${renderFormulas(r["Variable Formula"])}</td>
+                    </tr>
+                `;
+            }).join("");
+
+            document.getElementById("pageInfo").textContent =
+                `Showing ${start + 1}–${Math.min(start + PAGE_SIZE, filteredRows.length)} of ${filteredRows.length} rows in this batch`;
+            document.getElementById("prevBtn").disabled = currentPage <= 1;
+            document.getElementById("nextBtn").disabled = currentPage >= totalPages;
+        }
+
+        function changePage(delta) {
+            currentPage += delta;
+            renderTable();
+        }
+
+        function exportExcel() {
+            window.location.href = "/api/webi-details/export";
+        }
+
+        function esc(str) {
+            const div = document.createElement("div");
+            div.textContent = (str === undefined || str === null) ? "" : str;
+            return div.innerHTML;
+        }
+
+        init();
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assessment Details — BOBJ Environment Inventory</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F3F5F7;
+      --surface: #FFFFFF;
+      --ink: #16202A;
+      --ink-soft: #5B6B7A;
+      --line: #E2E7EC;
+      --blue: #2A5C8A;
+      --blue-soft: #EAF1F8;
+      --teal: #10847A;
+      --teal-soft: #E7F5F3;
+      --amber: #B4602B;
+      --amber-soft: #FBEFE6;
+      --pending: #97A3AE;
+      --pending-soft: #EEF1F3;
+      --red: #B4432B;
+      --red-soft: #FBEDE8;
+      --radius: 10px;
+      --shadow: 0 1px 2px rgba(22, 32, 42, 0.04), 0 1px 12px rgba(22, 32, 42, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'IBM Plex Sans', -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 40px 32px 72px;
+    }
+
+    .eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11.5px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--blue);
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-size: 30px;
+      font-weight: 700;
+      margin: 0 0 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .subtitle {
+      color: var(--ink-soft);
+      font-size: 14.5px;
+      margin: 0 0 20px;
+      max-width: 640px;
+      line-height: 1.5;
+    }
+
+    .status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 12px 18px;
+      margin-bottom: 28px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--ink-soft);
+    }
+
+    .status-pill .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--pending);
+    }
+
+    .status-pill.ok .dot {
+      background: var(--teal);
+    }
+
+    .status-pill.err .dot {
+      background: var(--red);
+    }
+
+    .status-pill.busy .dot {
+      background: var(--blue);
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .35
+      }
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: 7px;
+      border: none;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'IBM Plex Sans', sans-serif;
+      cursor: pointer;
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .btn:hover {
+      filter: brightness(1.08);
+    }
+
+    .btn:disabled {
+      background: var(--pending);
+      cursor: not-allowed;
+    }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 40px 0 16px;
+    }
+
+    .section-label .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--blue);
+      flex-shrink: 0;
+    }
+
+    .section-label span.text {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--line);
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px 16px 14px;
+      box-shadow: var(--shadow);
+      min-height: 84px;
+    }
+
+    .stat-card .label {
+      font-size: 11.5px;
+      color: var(--ink-soft);
+      font-weight: 500;
+      line-height: 1.35;
+      margin-bottom: 10px;
+      min-height: 30px;
+    }
+
+    .stat-card .value {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .stat-card .value.pending {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--pending);
+    }
+
+    .stat-card .value.err {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--red);
+    }
+
+    .skeleton {
+      height: 24px;
+      width: 60%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, #ECEFF2 25%, #E3E7EB 37%, #ECEFF2 63%);
+      background-size: 400% 100%;
+      animation: shimmer 1.4s ease infinite;
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: 100% 0
+      }
+
+      100% {
+        background-position: 0 0
+      }
+    }
+
+    .panel-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-head {
+      padding: 18px 22px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-head h2 {
+      font-size: 15.5px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .panel.universe .panel-head {
+      background: var(--teal-soft);
+    }
+
+    .panel.reports .panel-head {
+      background: var(--amber-soft);
+    }
+
+    .badge {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.02em;
+    }
+
+    .badge.pending-badge {
+      background: var(--pending-soft);
+      color: var(--pending);
+      border: 1px solid var(--line);
+    }
+
+    .badge.ok-badge-teal {
+      background: var(--teal);
+      color: #fff;
+    }
+
+    .badge.ok-badge-amber {
+      background: var(--amber);
+      color: #fff;
+    }
+
+    .badge.err-badge {
+      background: var(--red-soft);
+      color: var(--red);
+      border: 1px solid #F0D2C9;
+    }
+
+    .panel-body {
+      padding: 20px 22px 24px;
+    }
+
+    .group {
+      position: relative;
+      margin-bottom: 22px;
+    }
+
+    .group:last-child {
+      margin-bottom: 0;
+    }
+
+    .group-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--ink-soft);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .group-title .branch {
+      width: 12px;
+      height: 1px;
+      background: var(--line);
+    }
+
+    .tree {
+      border-left: 2px solid var(--line);
+      padding-left: 16px;
+      margin-left: 3px;
+    }
+
+    .tree-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      position: relative;
+    }
+
+    .tree-row::before {
+      content: '';
+      position: absolute;
+      left: -16px;
+      top: 50%;
+      width: 12px;
+      height: 1px;
+      background: var(--line);
+    }
+
+    .tree-row .row-label {
+      font-size: 13.5px;
+      color: var(--ink);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .swatch {
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .tree-row .row-value {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .tree-row .row-value.pending {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--pending);
+      background: var(--pending-soft);
+      padding: 3px 9px;
+      border-radius: 20px;
+    }
+
+    .tree-row .row-value.err {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--red);
+      background: var(--red-soft);
+      padding: 3px 9px;
+      border-radius: 20px;
+    }
+
+    .subtree {
+      border-left: 2px solid var(--line);
+      margin-left: 16px;
+      padding-left: 16px;
+      margin-top: 4px;
+    }
+
+    .subtree .tree-row .row-label {
+      font-size: 12.5px;
+      color: var(--ink-soft);
+    }
+
+    .standalone {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px dashed var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .standalone .label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink-soft);
+    }
+
+    .standalone .note {
+      display: block;
+      font-size: 11px;
+      color: var(--pending);
+      margin-top: 2px;
+      font-weight: 400;
+    }
+
+    .standalone .value {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--teal);
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 2px 0 4px;
+    }
+
+    .chip {
+      font-size: 12px;
+      font-weight: 500;
+      padding: 5px 10px;
+      border-radius: 7px;
+      background: var(--pending-soft);
+      color: var(--ink-soft);
+      border: 1px solid var(--line);
+    }
+
+    .chip.ok {
+      background: var(--teal-soft);
+      color: var(--teal);
+      border-color: #C7E6E1;
+    }
+
+    .chip.animate {
+      opacity: 0;
+      animation: chipFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes chipFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .tree-row.animate {
+      opacity: 0;
+      animation: rowFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes rowFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    footer.foot-note {
+      margin-top: 40px;
+      font-size: 12px;
+      color: var(--ink-soft);
+      text-align: center;
+    }
+
+    .detail-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .detail-table th,
+    .detail-table td {
+      border: 1px solid #ddd;
+      padding: 6px;
+      font-size: 12px;
+      text-align: left;
+    }
+
+    .detail-table th {
+      background: #f4f4f4;
+    }
+
+    @media (max-width: 880px) {
+      .stat-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .panel-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="page">
+
+    <div class="eyebrow">SAP BusinessObjects · Environment Inventory</div>
+    <h1>Assessment Details</h1>
+    <p class="subtitle">Consolidated snapshot of platform configuration, universe inventory, and report inventory for
+      the connected BOBJ environment.</p>
+
+    <div class="status-bar">
+      <span class="status-pill" id="status-pill"><span class="dot"></span>Not started</span>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn" id="run-btn">Run Assessment</button>
+        <button class="btn" id="logout-btn" style="background: var(--red);">Logout</button>
+      </div>
+    </div>
+
+    <!-- ================= COMMON SECTION ================= -->
+    <div class="section-label"><span class="dot"></span><span class="text">Platform Overview</span></div>
+    <div class="stat-grid" id="platform-stats"></div>
+
+    <!-- ================= INVENTORY BREAKDOWN ================= -->
+    <div class="section-label"><span class="dot" style="background:var(--ink-soft)"></span><span class="text">Inventory
+        Breakdown</span></div>
+
+    <div class="panel-row">
+
+      <!-- Universe Inventory -->
+      <div class="panel universe">
+        <div class="panel-head">
+          <h2>Universe Inventory</h2>
+          <span class="badge pending-badge" id="universe-total-badge">Not run</span>
+        </div>
+        <div class="panel-body">
+          <div class="group">
+            <div class="group-title"><span class="branch"></span>By Universe Type</div>
+            <div class="tree" id="universe-type-tree"></div>
+          </div>
+          <div class="group">
+            <div class="group-title"><span class="branch"></span>By Source Type</div>
+            <div class="tree" id="universe-source-tree"></div>
+          </div>
+          <div class="standalone">
+            <div class="label">Linked Universes (Kernel)
+              <span class="note">Tracked separately — not part of type/source split</span>
+            </div>
+            <div class="value" id="linked-universe-value">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reports Inventory -->
+      <div class="panel reports">
+        <div class="panel-head">
+          <h2>Reports Inventory</h2>
+          <span class="badge pending-badge" id="reports-badge">Not run</span>
+        </div>
+        <div class="panel-body">
+          <div class="group">
+            <div class="group-title"><span class="branch"></span>Report Types</div>
+            <div class="tree" id="report-type-tree"></div>
+          </div>
+          <div class="group">
+            <div class="group-title"><span class="branch"></span>Report Details</div>
+            <div class="tree">
+              <div class="tree-row">
+                <span class="row-label">Publications &amp; Publication Schedules</span>
+                <span class="row-value pending" id="pub-value">Not run</span>
+              </div>
+              <div class="tree-row">
+                <span class="row-label">Scheduled Reports</span>
+                <span class="row-value pending" id="sched-value">Not run</span>
+              </div>
+              <div class="tree-row">
+                <span class="row-label">Destination Types</span>
+              </div>
+            </div>
+            <div class="chip-row" id="destination-chips" style="margin-left:19px; margin-bottom:4px;"></div>
+
+            <div class="tree" style="margin-top:8px;">
+              <div class="tree-row"><span class="row-label">Events</span></div>
+              <div class="subtree" id="events-subtree"></div>
+            </div>
+            <div style="margin-top:20px;text-align:right;">
+              <button class="btn" onclick="window.location='/reports'">
+                View Report Details
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <footer class="foot-note">All data is collected server-side. This page only ever calls its own local backend.
+    </footer>
+
+  </div>
+
+  <script>
+    /* =============================================================================
+       This page never talks to BOBJ directly. It only calls its own backend
+       (same origin as this page), which already holds the session token.
+    ============================================================================= */
+
+    initPlatformCards();
+    document.getElementById("run-btn").addEventListener("click", runAssessment);
+    document.getElementById("logout-btn").addEventListener("click", toggleAuth);
+
+    /* On a normal page load (F5 / typing URL), clear all assessment state
+       so the page starts fresh. The pageshow handler below only fires
+       restoreAssessment when navigating back (bfcache). */
+    window.addEventListener("load", () => {
+      sessionStorage.removeItem("assemnetCompleted");
+      sessionStorage.removeItem("assessmentDone");
+      sessionStorage.removeItem("assessmentLoaded");
+      sessionStorage.removeItem("reportInventory");
+    });
+
+
+    async function toggleAuth() {
+      const authBtn = document.getElementById("logout-btn");
+      const runBtn = document.getElementById("run-btn");
+      if (authBtn.textContent.trim() === "Logout") {
+        // Perform logout
+        runBtn.disabled = true;
+        authBtn.disabled = true;
+        setStatus("err", "Logged out — Server stopped");
+        try {
+          await fetch("/api/logout", { method: "POST" });
+        } catch (e) {
+          // Ignore errors (e.g., server already stopped)
+        }
+        authBtn.textContent = "Log On";
+        authBtn.disabled = false;
+      } else {
+        // Perform login
+        setStatus("busy", "Logging in…");
+        try {
+          await fetch("/api/login", { method: "POST" });
+          setStatus("ok", "Logged in");
+          authBtn.textContent = "Logout";
+          runBtn.disabled = false;
+        } catch (e) {
+          setStatus("err", "Login failed");
+        }
+      }
+    }
+
+    function initPlatformCards() {
+      const cards = [
+        ["stat-biVersion", "BI Version"],
+        ["stat-relational", "Relational Data Source Connections"],
+        ["stat-olap", "OLAP Connections"],
+        ["stat-auth", "Authentication Types"],
+        ["stat-users", "Total Number of Users"],
+        ["stat-license", "License Keys"]
+      ];
+      document.getElementById("platform-stats").innerHTML = cards.map(([id, label]) => `
+    <div class="stat-card">
+      <div class="label">${label}</div>
+      <div class="value pending" id="${id}">Not run</div>
+    </div>`).join("");
+    }
+    /* removed: no longer auto-run from sessionStorage on page load */
+
+    async function runAssessment() {
+      document.getElementById("run-btn").disabled = true;
+      setStatus("busy", "Running assessment…");
+
+      try {
+        await Promise.all([
+          loadPlatformOverview(),
+          loadUniverseInventory(),
+          loadReportInventory(),
+        ]);
+        sessionStorage.setItem("assemnetCompleted", "true")
+        setStatus("ok", "Assessment complete");
+      } catch (e) {
+        console.error(e);
+        setStatus(
+          "err",
+          "Assessment failed — see inline errors"
+        );
+      } finally {
+        document.getElementById("run-btn").disabled = false;
+      }
+      sessionStorage.setItem("assessmentLoaded", "true");
+      sessionStorage.setItem("reportInventory", JSON.stringify({}));
+    }
+
+    async function loadPlatformOverview() {
+      const ids = ["stat-biVersion", "stat-relational", "stat-olap", "stat-auth", "stat-users", "stat-license"];
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        el.className = "value";
+        el.innerHTML = '<div class="skeleton"></div>';
+      });
+
+      const data = await getJson("/api/platform");
+
+      setValue("stat-biVersion", data.biVersion);
+      setConnectionCard(
+        "stat-relational",
+        data.relationalConnections
+      );
+      setConnectionCard(
+        "stat-olap",
+        data.olapConnections
+      );
+      setAuthTypes(
+        "stat-auth",
+        data.authTypes
+      );
+      setUserCard(
+        "stat-users",
+        data.totalUsers
+      );
+      setLicenseCard(
+        "stat-license",
+        data.licenseKeys
+      );
+
+      function setAuthTypes(id, auth) {
+
+        const el = document.getElementById(id);
+        if (!auth) {
+          el.className = "value pending";
+          el.textContent = "Not configured";
+          return;
+        }
+        let html = `
+            <div style="font-family:'IBM Plex Mono', monospace;
+                        font-size:24px;
+                        font-weight:600;">
+                ${auth.count}
+            </div>
+        `;
+        if (auth.details) {
+
+          html += `
+            <div style="
+                margin-top:8px;
+                font-size:11px;
+                font-family:'IBM Plex Sans', sans-serif;
+                color:#5B6B7A;
+                line-height:1.5;
+            ">
+            `;
+
+          for (const [provider, users] of Object.entries(auth.details)) {
+
+            if (users > 0) {
+              html += `${provider} - ${users}<br>`;
+            }
+
+          }
+
+          html += "</div>";
+        }
+
+        el.className = "value";
+        el.innerHTML = html;
+      }
+    }
+
+    async function loadUniverseInventory() {
+      setBadge("universe-total-badge", "pending-badge", "Loading…");
+      document.getElementById("linked-universe-value").textContent = "…";
+
+      const data = await getJson("/api/universes");
+
+      setBadge("universe-total-badge",
+        typeof data.total === "number" ? "ok-badge-teal" : "err-badge",
+        typeof data.total === "number" ? `${data.total} Universes` : "Error");
+
+      setTree("universe-type-tree", data.byType, ["var(--teal)", "#5FBDB4"]);
+      setTree("universe-source-tree", data.bySource, ["var(--teal)", "#5FBDB4"]);
+
+      document.getElementById("linked-universe-value").textContent =
+        data.linked ?? "Not configured";
+    }
+
+    async function loadReportInventory() {
+      setBadge("reports-badge", "pending-badge", "Loading…");
+
+      const data = await getJson("/api/reports");
+
+      const reportContainer = document.getElementById("report-type-tree");
+      reportContainer.innerHTML = "";
+
+      const colors = ["var(--amber)", "#D9824B", "#E5A982", "#F0CBB3", "#F7ECE4"];
+
+      for (let i = 0; i < data.types.length; i++) {
+        const t = data.types[i];
+        const ok = typeof t.value === "number";
+        const row = document.createElement("div");
+        row.className = "tree-row animate";
+        row.innerHTML = `<span class="row-label">
+        <span class="swatch" style="background:${colors[i % colors.length]}"></span>
+        ${t.label}
+      </span>
+      <span class="row-value ${ok ? '' : 'pending'}">${ok ? t.value : 'Not configured'}</span>
+    `;
+        reportContainer.appendChild(row);
+
+        // Animate display one by one with a short delay
+        await new Promise(resolve => setTimeout(resolve, 250));
+      }
+
+      setInline("pub-value", data.publications);
+      setInline("sched-value", data.scheduledReports);
+
+      // Show "Loading…" chips immediately, then fetch counts in background
+      const DEST_LABELS = ["Email", "FTP", "File System", "BI Inbox"];
+      document.getElementById("destination-chips").innerHTML = DEST_LABELS.map(label =>
+        `<span class="chip" id="dest-chip-${label.replace(/ /g, '-')}">${label} · <em>Loading…</em></span>`
+      ).join("");
+
+      // Async fetch — does not block the main assessment display
+      (async () => {
+        try {
+          const dests = await getJson("/api/schedule-destinations");
+          DEST_LABELS.forEach(label => {
+            const el = document.getElementById("dest-chip-" + label.replace(/ /g, "-"));
+            if (!el) return;
+            const val = dests[label];
+            el.className = "chip" + (typeof val === "number" ? " ok" : "");
+            el.textContent = label + " · " + (typeof val === "number" ? val : "Not configured");
+          });
+        } catch (e) {
+          DEST_LABELS.forEach(label => {
+            const el = document.getElementById("dest-chip-" + label.replace(/ /g, "-"));
+            if (el) el.textContent = label + " · Error";
+          });
+        }
+      })();
+
+      const eventsEl = document.getElementById("events-subtree");
+      if (eventsEl && data.events) {
+        eventsEl.innerHTML = data.events.map(ev => `
+    <div class="tree-row">
+      <span class="row-label">${ev.label}</span>
+      <span class="row-value ${typeof ev.value === 'number' ? '' : 'pending'}">${ev.value ?? 'Not configured'}</span>
+    </div>`).join("");
+      }
+
+      const anyOk = data.types.some(t => typeof t.value === "number");
+      setBadge("reports-badge", anyOk ? "ok-badge-amber" : "err-badge", anyOk ? "Live" : "Partial data");
+    }
+
+    /* ---------- helpers ---------- */
+
+    async function getJson(path) {
+      const res = await fetch(path);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || `Request failed: ${path}`);
+      return data;
+    }
+
+    function setValue(id, value) {
+      const el = document.getElementById(id);
+      if (value === null || value === undefined) {
+        el.className = "value pending";
+        el.textContent = "Not configured";
+      } else {
+        el.className = "value";
+        el.textContent = value;
+      }
+    }
+
+    function setConnectionCard(id, conn) {
+
+      const el = document.getElementById(id);
+
+      if (!conn) {
+        el.className = "value pending";
+        el.textContent = "Not configured";
+        return;
+      }
+
+      let html = `
+            <div style="
+                font-family:'IBM Plex Mono', monospace;
+                font-size:24px;
+                font-weight:600;">
+                ${conn.count}
+            </div>
+        `;
+
+      if (conn.details &&
+        Object.keys(conn.details).length > 0) {
+
+        html += `
+            <div style="
+                margin-top:8px;
+                font-size:11px;
+                color:#5B6B7A;
+                line-height:1.5;
+            ">
+            `;
+
+        Object.entries(conn.details)
+          .sort((a, b) => b[1] - a[1])
+          .forEach(([db, count]) => {
+
+            html += `${db} - ${count}<br>`;
+
+          });
+
+        html += "</div>";
+      }
+
+      el.className = "value";
+      el.innerHTML = html;
+    }
+    function setUserCard(id, users) {
+      const el = document.getElementById(id);
+
+      if (!users) {
+
+        el.className = "value pending";
+        el.textContent = "Not configured";
+        return;
+
+      }
+
+      let html = `
+            <div style="
+                font-family:'IBM Plex Mono', monospace;
+                font-size:24px;
+                font-weight:600;">
+                ${users.count}
+            </div>
+
+            <div style="
+                margin-top:8px;
+                font-size:11px;
+                line-height:1.5;
+                color:#5B6B7A;
+            ">
+                Enabled - ${users.enabled}<br>
+                Disabled - ${users.disabled}<br>
+                Recent Login(90days) - ${users.recentLogin}
+            </div>
+        `;
+
+      el.className = "value";
+      el.innerHTML = html;
+    }
+    function setLicenseCard(id, license) {
+
+      const el = document.getElementById(id);
+
+      if (!license) {
+
+        el.className = "value pending";
+        el.textContent = "Not configured";
+        return;
+      }
+
+      let html = `
+            <div style="
+                font-family:'IBM Plex Mono', monospace;
+                font-size:24px;
+                font-weight:600;">
+                ${license.totalKeys}
+            </div>
+
+            <div style="
+                margin-top:8px;
+                font-size:11px;
+                line-height:1.5;
+                color:#5B6B7A;
+            ">
+                Concurrent - ${license.concurrent}<br>
+                Named - ${license.named}<br>
+                Expiry - ${license.expiry}
+            </div>
+        `;
+
+      el.className = "value";
+      el.innerHTML = html;
+    }
+
+    function setInline(id, value) {
+      const el = document.getElementById(id);
+      if (value === null || value === undefined) {
+        el.className = "row-value pending";
+        el.textContent = "Not configured";
+      } else {
+        el.className = "row-value";
+        el.textContent = value;
+      }
+    }
+
+    function setTree(containerId, rows, colors) {
+      document.getElementById(containerId).innerHTML = rows.map((r, i) => `
+    <div class="tree-row">
+      <span class="row-label"><span class="swatch" style="background:${colors[i % colors.length]}"></span>${r.label}</span>
+      <span class="row-value ${typeof r.value === 'number' ? '' : 'pending'}">${r.value ?? 'Not configured'}</span>
+    </div>`).join("");
+    }
+
+    function setBadge(id, cls, text) {
+      const el = document.getElementById(id);
+      el.className = "badge " + cls;
+      el.textContent = text;
+    }
+
+    function setStatus(kind, text) {
+      const el = document.getElementById("status-pill");
+      el.className = "status-pill " + kind;
+      el.innerHTML = `<span class="dot"></span>${text}`;
+    }
+
+    // Restore UI state after page navigation/back.
+    function restoreAssessment() {
+      // If assessment data was previously loaded, re‑run the loaders to repopulate the UI.
+      if (sessionStorage.getItem("assessmentLoaded") === "true") {
+        // Re‑fetch data to ensure latest state.
+        Promise.all([
+          loadPlatformOverview(),
+          loadUniverseInventory(),
+          loadReportInventory()
+        ]).catch(e => console.error('Error restoring assessment:', e));
+      }
+    }
+
+    /* Only restore when navigating BACK (bfcache), not on a normal
+       page load / refresh. event.persisted is true when the page is
+       served from the back-forward cache. */
+    window.addEventListener("pageshow", function (event) {
+      if (event.persisted) {
+        restoreAssessment();
+      }
+    });
+  </script>
+
+</body>
+
+</html>
