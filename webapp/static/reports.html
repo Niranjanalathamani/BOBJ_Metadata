@@ -663,87 +663,13 @@
     </div>
 
     <script>
-        const BATCH_SIZE = 100;
         let reportGroups = {};
         let activeSearch = "";
-        let webiVisible = BATCH_SIZE;  // how many WebI reports to show
-        let totalWebiOnServer = 0;     // total WebI docs on server
-        let webiBatchesLoaded = 0;     // how many batches we've loaded so far
-        let _loadingMoreWebi = false;  // guard against double-click
+        let reportsById = {};
 
-        let _pollTimer = null;
-
-        async function init() {
-            // Get the total WebI count first (lightweight)
-            try {
-                const res = await fetch("/api/webi-details/total");
-                const data = await res.json();
-                totalWebiOnServer = data.total || 0;
-            } catch (e) { /* ignore */ }
-
-            await loadReports();
-            checkCrawlStatus();
-        }
-
-        async function loadReports() {
-            try {
-                const res = await fetch("/api/reports/list");
-                if (!res.ok) {
-                    throw new Error(`Failed to load reports: server returned ${res.status}`);
-                }
-                reportGroups = await res.json();
-
-                // Count how many batches of WebI data we actually have
-                const webiList = reportGroups["Web Intelligence"] || [];
-                webiBatchesLoaded = Math.ceil(webiList.length / BATCH_SIZE) || 0;
-
-                renderUI();
-            } catch (err) {
-                console.error(err);
-                document.getElementById("mainContainer").innerHTML = `
-                    <div class="status-banner">
-                        <span>Error loading reports: ${err.message}</span>
-                        <a href="javascript:void(0)" onclick="location.reload()" style="color: inherit; font-weight: bold; text-decoration: underline;">Retry</a>
-                    </div>
-                `;
-            }
-        }
-
-        async function checkCrawlStatus() {
-            try {
-                const res = await fetch("/api/webi-details/status");
-                const state = await res.json();
-                const bar = document.getElementById("crawlStatusBar");
-                const txt = document.getElementById("crawlStatusText");
-
-                if (state.status === "running") {
-                    bar.style.display = "block";
-                    const pct = state.batch_total
-                        ? Math.round((state.processed / state.batch_total) * 100)
-                        : 0;
-                    txt.textContent = `WebI batch ${state.current_batch + 1} crawling \u2014 ${state.processed}/${state.batch_total} documents processed (${pct}%).`;
-
-                    if (!_pollTimer) {
-                        _pollTimer = setInterval(async () => {
-                            const s = await (await fetch("/api/webi-details/status")).json();
-                            if (s.status !== "running") {
-                                clearInterval(_pollTimer);
-                                _pollTimer = null;
-                                bar.style.display = "none";
-                                _loadingMoreWebi = false;
-                                await loadReports();
-                            } else {
-                                const p = s.batch_total ? Math.round((s.processed / s.batch_total) * 100) : 0;
-                                txt.textContent = `WebI batch ${s.current_batch + 1} crawling \u2014 ${s.processed}/${s.batch_total} documents processed (${p}%).`;
-                            }
-                        }, 2000);
-                    }
-                } else {
-                    bar.style.display = "none";
-                }
-            } catch (e) {
-                // silently ignore
-            }
+        function init() {
+            // No API calls — just render the empty page
+            renderUI();
         }
 
         function toggleGroup(groupId) {
@@ -755,43 +681,8 @@
 
         function handleSearch() {
             activeSearch = document.getElementById("searchInput").value.trim().toLowerCase();
-            webiVisible = BATCH_SIZE; // reset to first batch on new search
             renderUI();
         }
-
-        async function loadMoreWebi() {
-            if (_loadingMoreWebi) return;
-            _loadingMoreWebi = true;
-
-            const webiList = reportGroups["Web Intelligence"] || [];
-            const totalLoaded = webiList.length;
-
-            // Check if we need to crawl the next batch from the server
-            if (totalLoaded < totalWebiOnServer) {
-                // We need to fetch the next batch from the server
-                const nextBatchIndex = Math.ceil(totalLoaded / BATCH_SIZE);
-
-                // Update the Load More button to show loading state
-                const loadBtn = document.getElementById("loadMoreWebiBtn");
-                if (loadBtn) {
-                    loadBtn.disabled = true;
-                    loadBtn.textContent = "Crawling next 100 reports…";
-                }
-
-                // Trigger server-side crawl for next batch
-                await fetch(`/api/webi-details/batch?batch=${nextBatchIndex}`, { method: "POST" });
-
-                // Start polling for completion
-                checkCrawlStatus();
-            } else {
-                // All data is already loaded, just show more rows
-                webiVisible += BATCH_SIZE;
-                _loadingMoreWebi = false;
-                renderUI();
-            }
-        }
-
-        let reportsById = {};
 
         function cleanHex(str) {
             if (!str) return "";
@@ -883,7 +774,7 @@
                     ${renderPills(r["Source Universe/Connections"], "pill-tag", 100)}
                 </div>
                 <div class="modal-section">
-                    <div class="modal-section-title">Filters & Prompts</div>
+                    <div class="modal-section-title">Filters &amp; Prompts</div>
                     <div style="margin-bottom:8px;"><b>Filters:</b> ${renderPills(r["Filters"], "pill-filter", 100)}</div>
                     <div><b>Prompts:</b> ${renderPills(r["Prompts"], "pill-filter", 100)}</div>
                 </div>
@@ -898,17 +789,28 @@
 
         function renderUI() {
             const container = document.getElementById("mainContainer");
-            let html = "";
-            let totalRenderedGroups = 0;
-            reportsById = {};
-
             const groupKeys = Object.keys(reportGroups);
+
+            if (groupKeys.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <rect x="3" y="4" width="18" height="16" rx="2"/>
+                            <path d="M9 9h6M9 13h6"/>
+                        </svg>
+                        <h3>Reports Inventory</h3>
+                        <p>Report details will be displayed here once data is loaded.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = "";
+            reportsById = {};
 
             for (const key of groupKeys) {
                 const reports = reportGroups[key] || [];
-                const isWebi = (key === "Web Intelligence");
 
-                // Filter matching reports
                 const filtered = reports.filter(r => {
                     const name = cleanHex(r.name || r.Name || "").toLowerCase();
                     const id = String(r.id || r.ID || "").toLowerCase();
@@ -916,38 +818,20 @@
                 });
 
                 if (filtered.length === 0) continue;
-                totalRenderedGroups++;
 
-                // Cache reports by ID
                 filtered.forEach(r => {
                     const rid = r.id || r.ID || r["Report ID"];
                     if (rid) reportsById[rid] = r;
                 });
 
-                const totalFiltered = filtered.length;
-                const visible = isWebi ? filtered.slice(0, webiVisible) : filtered;
-
-                const moreOnServer = isWebi && filtered.length < totalWebiOnServer && !activeSearch;
-                const hasMoreLocal = isWebi && webiVisible < totalFiltered;
-                const hasMore = hasMoreLocal || moreOnServer;
-
-                const remaining = hasMoreLocal
-                    ? totalFiltered - webiVisible
-                    : (moreOnServer ? totalWebiOnServer - filtered.length : 0);
-
-                const isExpanded = activeSearch !== "" ? "expanded" : "";
                 const safeKeyId = key.replace(/\s+/g, "-");
 
-                const displayTotal = isWebi
-                    ? Math.max(totalFiltered, totalWebiOnServer)
-                    : totalFiltered;
-
                 html += `
-                    <div class="accordion-item ${isExpanded}" id="group-${safeKeyId}">
+                    <div class="accordion-item" id="group-${safeKeyId}">
                         <button class="accordion-header" onclick="toggleGroup('${safeKeyId}')">
                             <span class="accordion-title">
                                 ${esc(key)}
-                                <span class="count-badge">${displayTotal}</span>
+                                <span class="count-badge">${filtered.length}</span>
                             </span>
                             <span class="chevron">\u25BC</span>
                         </button>
@@ -966,10 +850,9 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        ${visible.map(r => {
+                                        ${filtered.map(r => {
                                             const rName = cleanHex(r.name || r.Name || r["Report Name"] || "Unnamed Report");
                                             const rId = r.id || r.ID || r["Report ID"] || "\u2014";
-
                                             return `
                                                 <tr class="report-row">
                                                     <td class="report-name-cell">${esc(rName)}</td>
@@ -987,33 +870,17 @@
                                     </tbody>
                                 </table>
                             </div>
-                            ${isWebi ? `
-                            <div class="load-more-footer" ${!hasMore ? 'style="padding:12px 24px;"' : ''}>
-                                ${hasMore
-                                    ? `<button class="load-more-btn" id="loadMoreWebiBtn" onclick="loadMoreWebi()">Load Next ${Math.min(BATCH_SIZE, remaining)} Reports</button>
-                                       <div class="load-more-info">Showing ${visible.length} of ${displayTotal} Web Intelligence reports \u2022 ${remaining} remaining</div>`
-                                    : `<div class="load-more-info">Showing all ${totalFiltered} Web Intelligence reports</div>`
-                                }
-                            </div>` : ''}
                         </div>
                     </div>
                 `;
             }
 
-            if (totalRenderedGroups === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <rect x="3" y="4" width="18" height="16" rx="2"/>
-                            <path d="M9 9h6M9 13h6"/>
-                        </svg>
-                        <h3>No reports found</h3>
-                        <p>${activeSearch ? 'No reports match your search query.' : 'There are no reports loaded in the environment yet.'}</p>
-                    </div>
-                `;
-            } else {
-                container.innerHTML = html;
-            }
+            container.innerHTML = html || `
+                <div class="empty-state">
+                    <h3>No reports found</h3>
+                    <p>No reports match your search query.</p>
+                </div>
+            `;
         }
 
         function esc(str) {

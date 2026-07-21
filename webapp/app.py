@@ -25,13 +25,11 @@ from modules import reports
 from modules import publications
 from modules import schedules
 from modules import inventory
-from modules import report_details
+
 from threading import Lock
 import io
 from flask import send_file
-from modules import webicrawl
-from utils.login import login
-from utils.api_client import APIClient
+
 
 app = Flask(__name__, static_folder="static", static_url_path="")
 
@@ -258,139 +256,7 @@ def api_reports():
     except Exception as exc:  # noqa: BLE001
         return error_response(exc)
 
-@app.route("/api/reports/list")
-def api_reports_list():
-    try:
-        session = get_session()
-        return jsonify(report_details.get_report_list(session))
-    except Exception as exc:
-        import traceback
-        traceback.print_exc()
-        return error_response(exc)
 
-        
-@app.route("/api/webi-details/status")
-def api_webi_status():
-    return jsonify(webicrawl.get_state())
-
-
-
-
-@app.route("/api/webi-details/total")
-def api_webi_total():
-
-    try:
-
-        session = get_session()
-
-        rows = webicrawl.build_inventory(session)
-
-        report_ids = {
-
-            row["Report ID"]
-
-            for row in rows
-
-        }
-
-        return jsonify({
-
-            "total": len(report_ids)
-
-        })
-
-    except Exception as exc:
-
-        return error_response(exc)
-
-
-@app.route("/api/webi-details")
-def api_webi_details():
-
-    try:
-
-        session = get_session()
-
-        if not webicrawl.get_rows():
-
-            webicrawl.build_inventory(
-
-                session
-
-            )
-
-        return jsonify({
-
-            "state":
-
-                webicrawl.get_state(),
-
-            "rows":
-
-                webicrawl.get_rows()
-
-        })
-
-    except Exception as exc:
-
-        return error_response(exc)
-
-
-@app.route("/api/webi-details/export")
-def api_webi_export():
-    """Streams the cached dataset as a .xlsx download."""
-    try:
-        from openpyxl import Workbook
-
-        session = get_session()
-
-        if not webicrawl.get_rows():
-
-            webicrawl.build_inventory(
-
-                session
-
-    )
-
-        rows = webicrawl.get_rows()
-        wb = Workbook()
-        ws = wb.active
-        ws.title = "WebI Report Details"
-
-        headers = [
-            "Report Name",
-            "Report ID",
-            "Dimensions",
-            "Measures",
-            "Source Universe/Connections",
-            "Filters",
-            "Prompts",
-            "Variable Name",
-            "Variable Formula"
-
-]
-        ws.append(headers)
-
-        for row in rows:
-            ws.append([row.get(h, "") for h in headers])
-
-        # Reasonable column widths so it's usable on open, not just correct
-        widths = [30, 12, 35, 24, 30, 20, 22, 30]
-        for i, w in enumerate(widths, start=1):
-            ws.column_dimensions[ws.cell(row=1, column=i).column_letter].width = w
-
-        buf = io.BytesIO()
-        wb.save(buf)
-        buf.seek(0)
-
-        return send_file(
-            buf,
-            as_attachment=True,
-            download_name="webi_report_details.xlsx",
-            mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        )
-    except Exception as exc:
-        return error_response(exc)
 
 if __name__ == "__main__":
     app.run(
