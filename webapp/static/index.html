@@ -561,6 +561,7 @@
       <span class="status-pill" id="status-pill"><span class="dot"></span>Not started</span>
       <div style="display: flex; gap: 8px;">
         <button class="btn" id="run-btn">Run Assessment</button>
+        <button class="btn" id="refresh-btn" style="background: #475569;">↻ Refresh</button>
         <button class="btn" id="logout-btn" style="background: var(--red);">Logout</button>
       </div>
     </div>
@@ -656,18 +657,21 @@
 
     initPlatformCards();
     document.getElementById("run-btn").addEventListener("click", runAssessment);
+    document.getElementById("refresh-btn").addEventListener("click", refreshAssessment);
     document.getElementById("logout-btn").addEventListener("click", toggleAuth);
 
-    /* On a normal page load (F5 / typing URL), clear all assessment state
-       so the page starts fresh. The pageshow handler below only fires
-       restoreAssessment when navigating back (bfcache). */
     window.addEventListener("load", () => {
-      sessionStorage.removeItem("assemnetCompleted");
-      sessionStorage.removeItem("assessmentDone");
-      sessionStorage.removeItem("assessmentLoaded");
-      sessionStorage.removeItem("reportInventory");
+      restoreAssessment();
     });
 
+    async function refreshAssessment() {
+      sessionStorage.removeItem("platformData");
+      sessionStorage.removeItem("universeData");
+      sessionStorage.removeItem("reportData");
+      sessionStorage.removeItem("destinationData");
+      sessionStorage.removeItem("assessmentLoaded");
+      await runAssessment();
+    }
 
     async function toggleAuth() {
       const authBtn = document.getElementById("logout-btn");
@@ -713,10 +717,10 @@
       <div class="value pending" id="${id}">Not run</div>
     </div>`).join("");
     }
-    /* removed: no longer auto-run from sessionStorage on page load */
 
     async function runAssessment() {
       document.getElementById("run-btn").disabled = true;
+      document.getElementById("refresh-btn").disabled = true;
       setStatus("busy", "Running assessment…");
 
       try {
@@ -725,7 +729,7 @@
           loadUniverseInventory(),
           loadReportInventory(),
         ]);
-        sessionStorage.setItem("assemnetCompleted", "true")
+        sessionStorage.setItem("assemnetCompleted", "true");
         setStatus("ok", "Assessment complete");
       } catch (e) {
         console.error(e);
@@ -735,12 +739,13 @@
         );
       } finally {
         document.getElementById("run-btn").disabled = false;
+        document.getElementById("refresh-btn").disabled = false;
       }
       sessionStorage.setItem("assessmentLoaded", "true");
       sessionStorage.setItem("reportInventory", JSON.stringify({}));
     }
 
-    async function loadPlatformOverview() {
+    async function loadPlatformOverview(cachedData = null) {
       const ids = ["stat-biVersion", "stat-relational", "stat-olap", "stat-auth", "stat-users", "stat-license"];
       ids.forEach(id => {
         const el = document.getElementById(id);
@@ -748,7 +753,10 @@
         el.innerHTML = '<div class="skeleton"></div>';
       });
 
-      const data = await getJson("/api/platform");
+      const data = cachedData || await getJson("/api/platform");
+      if (!cachedData) {
+        sessionStorage.setItem("platformData", JSON.stringify(data));
+      }
 
       setValue("stat-biVersion", data.biVersion);
       setConnectionCard(
@@ -773,7 +781,6 @@
       );
 
       function setAuthTypes(id, auth) {
-
         const el = document.getElementById(id);
         if (!auth) {
           el.className = "value pending";
@@ -788,7 +795,6 @@
             </div>
         `;
         if (auth.details) {
-
           html += `
             <div style="
                 margin-top:8px;
@@ -798,28 +804,26 @@
                 line-height:1.5;
             ">
             `;
-
           for (const [provider, users] of Object.entries(auth.details)) {
-
             if (users > 0) {
               html += `${provider} - ${users}<br>`;
             }
-
           }
-
           html += "</div>";
         }
-
         el.className = "value";
         el.innerHTML = html;
       }
     }
 
-    async function loadUniverseInventory() {
+    async function loadUniverseInventory(cachedData = null) {
       setBadge("universe-total-badge", "pending-badge", "Loading…");
       document.getElementById("linked-universe-value").textContent = "…";
 
-      const data = await getJson("/api/universes");
+      const data = cachedData || await getJson("/api/universes");
+      if (!cachedData) {
+        sessionStorage.setItem("universeData", JSON.stringify(data));
+      }
 
       setBadge("universe-total-badge",
         typeof data.total === "number" ? "ok-badge-teal" : "err-badge",
@@ -832,10 +836,13 @@
         data.linked ?? "Not configured";
     }
 
-    async function loadReportInventory() {
+    async function loadReportInventory(cachedData = null, cachedDests = null) {
       setBadge("reports-badge", "pending-badge", "Loading…");
 
-      const data = await getJson("/api/reports");
+      const data = cachedData || await getJson("/api/reports");
+      if (!cachedData) {
+        sessionStorage.setItem("reportData", JSON.stringify(data));
+      }
 
       const reportContainer = document.getElementById("report-type-tree");
       reportContainer.innerHTML = "";
@@ -855,8 +862,10 @@
     `;
         reportContainer.appendChild(row);
 
-        // Animate display one by one with a short delay
-        await new Promise(resolve => setTimeout(resolve, 250));
+        // Animate display one by one with a short delay (only if not loaded from cache)
+        if (!cachedData) {
+          await new Promise(resolve => setTimeout(resolve, 250));
+        }
       }
 
       setInline("pub-value", data.publications);
@@ -864,28 +873,37 @@
 
       // Show "Loading…" chips immediately, then fetch counts in background
       const DEST_LABELS = ["Email", "FTP", "File System", "BI Inbox"];
-      document.getElementById("destination-chips").innerHTML = DEST_LABELS.map(label =>
-        `<span class="chip" id="dest-chip-${label.replace(/ /g, '-')}">${label} · <em>Loading…</em></span>`
-      ).join("");
+      
+      if (cachedDests) {
+        document.getElementById("destination-chips").innerHTML = DEST_LABELS.map(label => {
+          const val = cachedDests[label];
+          return `<span class="chip${typeof val === "number" ? " ok" : ""}" id="dest-chip-${label.replace(/ /g, '-')}">${label} · ${typeof val === "number" ? val : "Not configured"}</span>`;
+        }).join("");
+      } else {
+        document.getElementById("destination-chips").innerHTML = DEST_LABELS.map(label =>
+          `<span class="chip" id="dest-chip-${label.replace(/ /g, '-')}">${label} · <em>Loading…</em></span>`
+        ).join("");
 
-      // Async fetch — does not block the main assessment display
-      (async () => {
-        try {
-          const dests = await getJson("/api/schedule-destinations");
-          DEST_LABELS.forEach(label => {
-            const el = document.getElementById("dest-chip-" + label.replace(/ /g, "-"));
-            if (!el) return;
-            const val = dests[label];
-            el.className = "chip" + (typeof val === "number" ? " ok" : "");
-            el.textContent = label + " · " + (typeof val === "number" ? val : "Not configured");
-          });
-        } catch (e) {
-          DEST_LABELS.forEach(label => {
-            const el = document.getElementById("dest-chip-" + label.replace(/ /g, "-"));
-            if (el) el.textContent = label + " · Error";
-          });
-        }
-      })();
+        // Async fetch — does not block the main assessment display
+        (async () => {
+          try {
+            const dests = await getJson("/api/schedule-destinations");
+            sessionStorage.setItem("destinationData", JSON.stringify(dests));
+            DEST_LABELS.forEach(label => {
+              const el = document.getElementById("dest-chip-" + label.replace(/ /g, "-"));
+              if (!el) return;
+              const val = dests[label];
+              el.className = "chip" + (typeof val === "number" ? " ok" : "");
+              el.textContent = label + " · " + (typeof val === "number" ? val : "Not configured");
+            });
+          } catch (e) {
+            DEST_LABELS.forEach(label => {
+              const el = document.getElementById("dest-chip-" + label.replace(/ /g, "-"));
+              if (el) el.textContent = label + " · Error";
+            });
+          }
+        })();
+      }
 
       const eventsEl = document.getElementById("events-subtree");
       if (eventsEl && data.events) {
@@ -921,15 +939,12 @@
     }
 
     function setConnectionCard(id, conn) {
-
       const el = document.getElementById(id);
-
       if (!conn) {
         el.className = "value pending";
         el.textContent = "Not configured";
         return;
       }
-
       let html = `
             <div style="
                 font-family:'IBM Plex Mono', monospace;
@@ -938,10 +953,7 @@
                 ${conn.count}
             </div>
         `;
-
-      if (conn.details &&
-        Object.keys(conn.details).length > 0) {
-
+      if (conn.details && Object.keys(conn.details).length > 0) {
         html += `
             <div style="
                 margin-top:8px;
@@ -950,32 +962,24 @@
                 line-height:1.5;
             ">
             `;
-
         Object.entries(conn.details)
           .sort((a, b) => b[1] - a[1])
           .forEach(([db, count]) => {
-
             html += `${db} - ${count}<br>`;
-
           });
-
         html += "</div>";
       }
-
       el.className = "value";
       el.innerHTML = html;
     }
+
     function setUserCard(id, users) {
       const el = document.getElementById(id);
-
       if (!users) {
-
         el.className = "value pending";
         el.textContent = "Not configured";
         return;
-
       }
-
       let html = `
             <div style="
                 font-family:'IBM Plex Mono', monospace;
@@ -983,7 +987,6 @@
                 font-weight:600;">
                 ${users.count}
             </div>
-
             <div style="
                 margin-top:8px;
                 font-size:11px;
@@ -995,21 +998,17 @@
                 Recent Login(90days) - ${users.recentLogin}
             </div>
         `;
-
       el.className = "value";
       el.innerHTML = html;
     }
+
     function setLicenseCard(id, license) {
-
       const el = document.getElementById(id);
-
       if (!license) {
-
         el.className = "value pending";
         el.textContent = "Not configured";
         return;
       }
-
       let html = `
             <div style="
                 font-family:'IBM Plex Mono', monospace;
@@ -1017,7 +1016,6 @@
                 font-weight:600;">
                 ${license.totalKeys}
             </div>
-
             <div style="
                 margin-top:8px;
                 font-size:11px;
@@ -1029,7 +1027,6 @@
                 Expiry - ${license.expiry}
             </div>
         `;
-
       el.className = "value";
       el.innerHTML = html;
     }
@@ -1067,24 +1064,28 @@
 
     // Restore UI state after page navigation/back.
     function restoreAssessment() {
-      // If assessment data was previously loaded, re‑run the loaders to repopulate the UI.
       if (sessionStorage.getItem("assessmentLoaded") === "true") {
-        // Re‑fetch data to ensure latest state.
-        Promise.all([
-          loadPlatformOverview(),
-          loadUniverseInventory(),
-          loadReportInventory()
-        ]).catch(e => console.error('Error restoring assessment:', e));
+        const plat = sessionStorage.getItem("platformData");
+        const univ = sessionStorage.getItem("universeData");
+        const rep = sessionStorage.getItem("reportData");
+        const dest = sessionStorage.getItem("destinationData");
+        
+        setStatus("ok", "Assessment complete");
+
+        if (plat && univ && rep) {
+          try {
+            loadPlatformOverview(JSON.parse(plat));
+            loadUniverseInventory(JSON.parse(univ));
+            loadReportInventory(JSON.parse(rep), dest ? JSON.parse(dest) : null);
+          } catch (e) {
+            console.error('Error parsing cached assessment:', e);
+          }
+        }
       }
     }
 
-    /* Only restore when navigating BACK (bfcache), not on a normal
-       page load / refresh. event.persisted is true when the page is
-       served from the back-forward cache. */
     window.addEventListener("pageshow", function (event) {
-      if (event.persisted) {
-        restoreAssessment();
-      }
+      restoreAssessment();
     });
   </script>
 

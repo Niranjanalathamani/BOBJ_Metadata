@@ -88,6 +88,26 @@
             transform: translateX(-2px);
         }
 
+        .refresh-btn {
+            background: var(--blue);
+            border: 1px solid var(--blue);
+            color: #fff;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13.5px;
+            font-weight: 600;
+            font-family: inherit;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            white-space: nowrap;
+        }
+
+        .refresh-btn:hover {
+            background: var(--navy);
+            border-color: var(--navy);
+        }
+
         .toolbar {
             max-width: 1200px;
             margin: 28px auto 0;
@@ -634,6 +654,8 @@
             </svg>
             <input type="text" id="searchInput" placeholder="Search by report name or ID…" oninput="handleSearch()">
         </div>
+        <button class="refresh-btn" id="refreshBtn" onclick="loadReports(true)">↻ Refresh</button>
+        <button class="refresh-btn" id="exportBtn" onclick="exportToExcel()" style="background: #10847a; border-color: #10847a;">⬇ Export to Excel</button>
     </div>
 
     <div class="crawl-status-bar" id="crawlStatusBar">
@@ -671,8 +693,22 @@
             await loadReports();
         }
 
-        async function loadReports() {
+        async function loadReports(forceRefresh = false) {
             const container = document.getElementById("mainContainer");
+
+            if (!forceRefresh) {
+                const cached = sessionStorage.getItem("reportsList");
+                if (cached) {
+                    try {
+                        reportGroups = JSON.parse(cached);
+                        renderUI();
+                        return;
+                    } catch (e) {
+                        console.error("Error parsing cached reports list:", e);
+                    }
+                }
+            }
+
             container.innerHTML = `
                 <div class="loading-state">
                     <div class="spinner"></div>
@@ -685,13 +721,14 @@
                     throw new Error(`Server returned ${res.status}`);
                 }
                 reportGroups = await res.json();
+                sessionStorage.setItem("reportsList", JSON.stringify(reportGroups));
                 renderUI();
             } catch (err) {
                 console.error(err);
                 container.innerHTML = `
                     <div class="status-banner">
                         <span>Error loading reports: ${err.message}</span>
-                        <a href="javascript:void(0)" onclick="loadReports()" style="color: inherit; font-weight: bold; text-decoration: underline;">Retry</a>
+                        <a href="javascript:void(0)" onclick="loadReports(true)" style="color: inherit; font-weight: bold; text-decoration: underline;">Retry</a>
                     </div>
                 `;
             }
@@ -911,6 +948,88 @@
             const div = document.createElement("div");
             div.textContent = (str === undefined || str === null) ? "" : str;
             return div.innerHTML;
+        }
+
+        function exportToExcel() {
+            let html = `
+            <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+            <head>
+                <meta charset="utf-8">
+                <!--[if gte mso 9]>
+                <xml>
+                    <x:ExcelWorkbook>
+                        <x:ExcelWorksheets>
+                            <x:ExcelWorksheet>
+                                <x:Name>Report Inventory</x:Name>
+                                <x:WorksheetOptions>
+                                    <x:DisplayGridlines/>
+                                </x:WorksheetOptions>
+                            </x:ExcelWorksheet>
+                        </x:ExcelWorksheets>
+                    </x:ExcelWorkbook>
+                </xml>
+                <![endif]-->
+                <style>
+                    table { border-collapse: collapse; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; width: 100%; }
+                    th { background-color: #16324F; color: #ffffff; font-weight: bold; border: 1px solid #CBD5E1; padding: 10px; text-align: left; }
+                    td { border: 1px solid #CBD5E1; padding: 8px; vertical-align: top; font-size: 13px; color: #334155; }
+                    tr:nth-child(even) td { background-color: #F8FAFC; }
+                    .report-name { font-weight: bold; color: #0F172A; }
+                    .metadata-list { margin: 0; padding-left: 20px; }
+                </style>
+            </head>
+            <body>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Report Type</th>
+                            <th>Report Name</th>
+                            <th>Report ID</th>
+                            <th>Dimensions</th>
+                            <th>Measures</th>
+                            <th>Filters</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            for (const [groupName, reports] of Object.entries(reportGroups)) {
+                reports.forEach(r => {
+                    const name = cleanHex(r.name || r.Name || r["Report Name"] || "Unnamed Report");
+                    const id = r.id || r.ID || r["Report ID"] || "";
+                    const dims = parseList(r.dimensions || r.Dimensions).join(", ");
+                    const measures = parseList(r.measures || r.Measures).join(", ");
+                    const filters = parseList(r.filters || r.Filters).join(" | ");
+
+                    html += `
+                        <tr>
+                            <td>${esc(groupName)}</td>
+                            <td class="report-name">${esc(name)}</td>
+                            <td>${esc(id)}</td>
+                            <td>${esc(dims || "—")}</td>
+                            <td>${esc(measures || "—")}</td>
+                            <td>${esc(filters || "—")}</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            html += `
+                    </tbody>
+                </table>
+            </body>
+            </html>
+            `;
+
+            const blob = new Blob([html], { type: "application/vnd.ms-excel;charset=utf-8;" });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", "BOBJ_Report_Inventory.xls");
+            link.style.visibility = "hidden";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         init();

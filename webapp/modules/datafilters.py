@@ -44,17 +44,18 @@ def parse_condition_node(node):
                         val_raw = c.get("value", [])
 
                         if isinstance(val_raw, list):
-                            val_str = ", ".join(str(v) for v in val_raw)
-                        elif val_raw is not None:
-                            val_str = str(val_raw)
+                            if len(val_raw) > 0:
+                                val_str = ", ".join(str(v) for v in val_raw)
+                                formatted_val = f"[{val_str}]"
+                            else:
+                                formatted_val = "[]"
+                        elif val_raw is not None and str(val_raw).strip() != "":
+                            formatted_val = f"[{str(val_raw).strip()}]"
                         else:
-                            val_str = ""
+                            formatted_val = "[]"
 
                         if key and operator:
-                            if val_str:
-                                filter_str = f"{key} {operator} ({val_str})"
-                            else:
-                                filter_str = f"{key} {operator}"
+                            filter_str = f"Key: {key} | Operator: {operator} | Value: {formatted_val}"
                             filters.append(filter_str)
                         elif key:
                             filters.append(key)

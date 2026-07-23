@@ -176,7 +176,7 @@ def fetch_webi_documents(session):
     SELECT SI_ID, SI_KIND, SI_NAME, SI_CUID
     FROM CI_INFOOBJECTS
     WHERE SI_KIND = 'Webi'
-      AND SI_INSTANCE = 0
+      AND SI_INSTANCE = 0 
     ORDER BY SI_NAME
     """
 

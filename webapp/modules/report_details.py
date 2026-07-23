@@ -35,12 +35,14 @@ def get_non_webi_reports(session) -> dict:
 
     query = f"""
     SELECT
-        SI_ID,
-        SI_NAME,
-        SI_KIND
+    SI_ID,
+    SI_NAME,
+    SI_KIND
     FROM CI_INFOOBJECTS
-    WHERE SI_KIND IN ({kinds}) AND SI_INSTANCE = 0
-    ORDER BY SI_KIND, SI_NAME
+    WHERE SI_KIND IN ({kinds})
+    AND SI_INSTANCE = 0
+    AND SI_ID IN (16115, 8012, 18494, 18622)
+    ORDER BY SI_ID, SI_NAME
     """
 
     entries = run_paginated_cmsquery(session, query)
