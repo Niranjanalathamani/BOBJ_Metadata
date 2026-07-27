@@ -19,8 +19,8 @@ import xml.etree.ElementTree as ET
 
 from config import BOBJ_BASE_URL
 from utils.infostore import run_paginated_cmsquery
-# from modules.dataprovider import fetch_dataproviders
-# from modules.variables import fetch_variables
+from modules.dataprovider import fetch_dataproviders
+from modules.variables import fetch_variables
 
 
 # ============================================
@@ -243,6 +243,8 @@ def get_all_metadata(session):
 
         dims, measures = fetch_dimensions_measures(session, cuid)
         filters = fetch_doc_filters(session, doc_id)
+        variables = fetch_variables(session, doc_id)
+        dataproviders = fetch_dataproviders(session, doc_id)
 
         results.append({
             "id":            doc_id,
@@ -251,6 +253,8 @@ def get_all_metadata(session):
             "dimensions":    dims,
             "measures":      measures,
             "filters":       filters,
+            "variables":     variables,
+            "dataproviders": dataproviders,
         })
 
     print(f"[METADATA] Done — collected metadata and filters for "
