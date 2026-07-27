@@ -16,6 +16,7 @@ def _fetch_by_kind(session, si_kind: str) -> list[dict]:
     try:
         entries = run_paginated_cmsquery(session, query)
         if isinstance(entries, dict):
+            
             entries = [entries]
         for e in entries:
             docs.append({

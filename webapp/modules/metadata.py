@@ -21,6 +21,8 @@ from config import BOBJ_BASE_URL
 from utils.infostore import run_paginated_cmsquery
 from modules.dataprovider import fetch_dataproviders
 from modules.variables import fetch_variables
+from modules.path import build_folder_map
+from modules.path import get_report_folder_path
 
 
 # ============================================
@@ -173,7 +175,7 @@ def fetch_webi_documents(session):
     """
 
     query = """
-    SELECT SI_ID, SI_KIND, SI_NAME, SI_CUID
+    SELECT SI_ID, SI_KIND, SI_NAME, SI_CUID,SI_PARENTID
     FROM CI_INFOOBJECTS
     WHERE SI_KIND = 'Webi'
       AND SI_INSTANCE = 0 
@@ -196,7 +198,8 @@ def fetch_webi_documents(session):
             "id":   doc_id,
             "name": e.get("SI_NAME"),
             "cuid": e.get("SI_CUID"),
-        })
+            "SI_PARENTID":e.get("SI_PARENTID")
+            })
 
     return docs
 
@@ -208,7 +211,7 @@ from modules.datafilters import fetch_doc_filters
 # GET ALL METADATA (MAIN ENTRY POINT)
 # ============================================
 
-def get_all_metadata(session):
+def get_all_metadata(session, folder_map=None):
     """
     Loop through every WebI document on the platform, fetch its
     $metadata (dimensions & measures) and datafilters, and return a list of dicts:
@@ -227,6 +230,8 @@ def get_all_metadata(session):
     """
 
     documents = fetch_webi_documents(session)
+    if folder_map is None:
+        folder_map = build_folder_map(session)
 
     print(f"[METADATA] Found {len(documents)} WebI documents. "
           f"Fetching metadata and filters for each...")
@@ -234,9 +239,10 @@ def get_all_metadata(session):
     results = []
 
     for idx, doc in enumerate(documents, start=1):
-
+        folder_path =get_report_folder_path(doc,folder_map)
         cuid = doc.get("cuid")
         doc_id = doc.get("id")
+        
 
         print(f"[METADATA] ({idx}/{len(documents)}) "
               f"{doc['name']} (cuid={cuid}, id={doc_id})")
@@ -250,6 +256,7 @@ def get_all_metadata(session):
             "id":            doc_id,
             "name":          doc["name"],
             "cuid":          cuid,
+            "folder_path":folder_path,
             "dimensions":    dims,
             "measures":      measures,
             "filters":       filters,

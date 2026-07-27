@@ -28,7 +28,10 @@ _GROUP_ORDER = [
 ]
 
 
-def get_non_webi_reports(session) -> dict:
+from modules.path import build_folder_map, get_report_folder_path
+
+
+def get_non_webi_reports(session, folder_map) -> dict:
     """Fetch Crystal / Analysis / Dashboard / Lumira reports via CMS query."""
 
     kinds = ", ".join(f"'{k}'" for k in _CMS_KIND_TO_GROUP)
@@ -37,7 +40,8 @@ def get_non_webi_reports(session) -> dict:
     SELECT
     SI_ID,
     SI_NAME,
-    SI_KIND
+    SI_KIND,
+    SI_PARENTID
     FROM CI_INFOOBJECTS
     WHERE SI_KIND IN ({kinds})
     AND SI_INSTANCE = 0
@@ -52,10 +56,12 @@ def get_non_webi_reports(session) -> dict:
     for e in entries:
         kind = e.get("SI_KIND")
         group = _CMS_KIND_TO_GROUP.get(kind, kind)
+        folder_path = get_report_folder_path(e, folder_map)
 
         grouped[group].append({
             "id": e.get("SI_ID"),
             "name": e.get("SI_NAME"),
+            "folder_path": folder_path,
             "dimensions": [],
             "measures": [],
         })
@@ -66,8 +72,9 @@ def get_non_webi_reports(session) -> dict:
 def get_report_list(session) -> dict:
     """Combine CMS-backed non-WebI reports with WebI metadata."""
 
-    non_webi = get_non_webi_reports(session)
-    webi_reports = metadata.get_all_metadata(session)
+    folder_map = build_folder_map(session)
+    non_webi = get_non_webi_reports(session, folder_map)
+    webi_reports = metadata.get_all_metadata(session, folder_map)
 
     result = {"Web Intelligence": webi_reports}
     for group in _GROUP_ORDER[1:]:
