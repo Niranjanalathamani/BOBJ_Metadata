@@ -701,7 +701,7 @@
     <div class="container" id="mainContainer">
         <div class="loading-state">
             <div class="spinner"></div>
-            <p>Loading reports...</p>
+            <p id="loadingMessage">Loading reports...</p>
         </div>
     </div>
 
@@ -745,9 +745,27 @@
             container.innerHTML = `
                 <div class="loading-state">
                     <div class="spinner"></div>
-                    <p>Loading report details & metadata...</p>
+                    <p id="loadingMessage">Loading report details & metadata...</p>
                 </div>
             `;
+
+            let progressInterval = setInterval(async () => {
+                try {
+                    const progressRes = await fetch("/api/reports/crawl-progress");
+                    if (progressRes.ok) {
+                        const progressData = await progressRes.json();
+                        if (progressData.status === "running" && progressData.total > 0) {
+                            const loadingMsgEl = document.getElementById("loadingMessage");
+                            if (loadingMsgEl) {
+                                loadingMsgEl.textContent = `Loading report details & metadata... (${progressData.current}/${progressData.total} reports)`;
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.error("Error fetching progress:", e);
+                }
+            }, 800);
+
             try {
                 const res = await fetch("/api/reports/list");
                 if (!res.ok) {
@@ -764,6 +782,8 @@
                         <a href="javascript:void(0)" onclick="loadReports(true)" style="color: inherit; font-weight: bold; text-decoration: underline;">Retry</a>
                     </div>
                 `;
+            } finally {
+                clearInterval(progressInterval);
             }
         }
 
@@ -858,6 +878,49 @@
             return formulas.map(f => `<div class="formula-block">${esc(f)}</div>`).join('<div style="height:4px"></div>');
         }
 
+        function renderVisualizations(val, isExcel = false) {
+            if (!val) return isExcel ? "—" : '<span style="color:var(--muted); font-size:12px;">—</span>';
+            const entries = Object.entries(val);
+            if (entries.length === 0) return isExcel ? "—" : '<span style="color:var(--muted); font-size:12px;">—</span>';
+            
+            if (isExcel) {
+                return entries.map(([tab, data]) => {
+                    const vis = (data && data.visualizations) !== undefined ? data.visualizations : 0;
+                    const tbl = (data && data.tables) !== undefined ? data.tables : 0;
+                    return `${tab} (V: ${vis}, T: ${tbl})`;
+                }).join(" | ");
+            }
+            
+            let html = '<div class="visualizations-container">';
+            entries.forEach(([tab, data]) => {
+                const vis = (data && data.visualizations) !== undefined ? data.visualizations : 0;
+                const tbl = (data && data.tables) !== undefined ? data.tables : 0;
+                html += `<div style="margin-bottom: 4px;">`;
+                html += `<span class="pill-tag pill-var" style="font-weight:600; font-size:11px; padding: 2px 6px; background-color: #F1F5F9; color: #475569; border-color: #CBD5E1;">${esc(tab)}: V: ${vis}, T: ${tbl}</span>`;
+                html += `</div>`;
+            });
+            html += '</div>';
+            return html;
+        }
+
+        function renderSQL(val) {
+            const queries = parseList(val);
+            if (queries.length === 0) return '<span style="color:var(--muted); font-size:12px;">—</span>';
+            
+            let html = '<div class="sql-container">';
+            queries.forEach((q, idx) => {
+                if (idx < 2) {
+                    const truncated = q.length > 40 ? q.substring(0, 37) + "..." : q;
+                    html += `<div class="formula-block" style="font-size:11px; margin-bottom:4px; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${esc(q)}">${esc(truncated)}</div>`;
+                }
+            });
+            if (queries.length > 2) {
+                html += `<div style="font-size:11px; color:var(--muted); font-style:italic;">+${queries.length - 2} more...</div>`;
+            }
+            html += '</div>';
+            return html;
+        }
+
         function openDetailModal(reportId) {
             const r = reportsById[reportId];
             if (!r) return;
@@ -907,6 +970,17 @@
                 <div class="modal-section">
                     <div class="modal-section-title">Filters (${filters.length})</div>
                     ${renderPills(filters, "pill-filter", 100)}
+                </div>
+                <div class="modal-section">
+                    <div class="modal-section-title">Visualizations</div>
+                    ${renderVisualizations(r.visualizations, false)}
+                </div>
+                <div class="modal-section">
+                    <div class="modal-section-title">SQL Queries (${(r.sql || []).length})</div>
+                    ${(r.sql || []).length === 0 ? '<span style="color:var(--muted); font-size:12px;">—</span>' : 
+                      (r.sql || []).map(query => `
+                        <div class="formula-block" style="margin-top: 6px; font-family: monospace; white-space: pre-wrap; word-break: break-all; max-height: 120px; overflow-y: auto;">${esc(query)}</div>
+                      `).join("")}
                 </div>
             `;
 
@@ -983,6 +1057,8 @@
                                             <th class="col-vars">Variables</th>
                                             <th class="col-formulas">Variable Definitions</th>
                                             <th class="col-filters">Filters</th>
+                                            <th class="col-visualizations">Visualizations</th>
+                                            <th class="col-sql">SQL Queries</th>
                                             <th class="col-actions">Actions</th>
                                         </tr>
                                     </thead>
@@ -1011,6 +1087,8 @@
                                                     <td class="col-vars">${renderPills(varNames, "pill-var", 3)}</td>
                                                     <td class="col-formulas">${renderFormulas(varFormulas)}</td>
                                                     <td class="col-filters">${renderPills(filters, "pill-filter", 3)}</td>
+                                                    <td class="col-visualizations">${renderVisualizations(r.visualizations)}</td>
+                                                    <td class="col-sql">${renderSQL(r.sql)}</td>
                                                     <td class="col-actions">
                                                         <button class="btn-view-details" onclick="openDetailModal('${esc(rId)}')">🔍 Details</button>
                                                     </td>
@@ -1086,6 +1164,8 @@
                             <th>Variables</th>
                             <th>Variable Definitions</th>
                             <th>Filters</th>
+                            <th>Visualizations</th>
+                            <th>SQL Queries</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1102,6 +1182,8 @@
                     const varNames = Object.keys(variables).join(", ");
                     const varFormulas = Object.values(variables).join(", ");
                     const filters = parseList(r.filters || r.Filters).join(" | ");
+                    const visualizations = renderVisualizations(r.visualizations || r.Visualizations, true);
+                    const sqlQueries = parseList(r.sql || r.SQL).join(" \n\n ");
 
                     const complexity = getComplexity(r);
 
@@ -1118,6 +1200,8 @@
                             <td>${esc(varNames || "—")}</td>
                             <td>${esc(varFormulas || "—")}</td>
                             <td>${esc(filters || "—")}</td>
+                            <td>${esc(visualizations || "—")}</td>
+                            <td>${esc(sqlQueries || "—")}</td>
                         </tr>
                     `;
                 });

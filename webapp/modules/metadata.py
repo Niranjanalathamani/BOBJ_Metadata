@@ -19,10 +19,29 @@ import xml.etree.ElementTree as ET
 
 from config import BOBJ_BASE_URL
 from utils.infostore import run_paginated_cmsquery
-from modules.dataprovider import fetch_dataproviders
+from modules.dataprovider import fetch_dataproviders, fetch_query_plans_sql
 from modules.variables import fetch_variables
 from modules.path import build_folder_map
 from modules.path import get_report_folder_path
+from modules.visualizations import fetch_visualization_counts
+import threading
+
+_progress_lock = threading.Lock()
+_progress = {
+    "current": 0,
+    "total": 0,
+    "status": "idle"
+}
+
+def get_progress():
+    with _progress_lock:
+        return dict(_progress)
+
+def set_progress(current, total, status):
+    with _progress_lock:
+        _progress["current"] = current
+        _progress["total"] = total
+        _progress["status"] = status
 
 
 # ============================================
@@ -233,36 +252,47 @@ def get_all_metadata(session, folder_map=None):
     if folder_map is None:
         folder_map = build_folder_map(session)
 
-    print(f"[METADATA] Found {len(documents)} WebI documents. "
+    total_docs = len(documents)
+    set_progress(0, total_docs, "running")
+
+    print(f"[METADATA] Found {total_docs} WebI documents. "
           f"Fetching metadata and filters for each...")
 
     results = []
 
-    for idx, doc in enumerate(documents, start=1):
-        folder_path =get_report_folder_path(doc,folder_map)
-        cuid = doc.get("cuid")
-        doc_id = doc.get("id")
-        
+    try:
+        for idx, doc in enumerate(documents, start=1):
+            folder_path =get_report_folder_path(doc,folder_map)
+            cuid = doc.get("cuid")
+            doc_id = doc.get("id")
+            
 
-        print(f"[METADATA] ({idx}/{len(documents)}) "
-              f"{doc['name']} (cuid={cuid}, id={doc_id})")
+            print(f"[METADATA] ({idx}/{total_docs}) "
+                  f"{doc['name']} (cuid={cuid}, id={doc_id})")
 
-        dims, measures = fetch_dimensions_measures(session, cuid)
-        filters = fetch_doc_filters(session, doc_id)
-        variables = fetch_variables(session, doc_id)
-        dataproviders = fetch_dataproviders(session, doc_id)
+            dims, measures = fetch_dimensions_measures(session, cuid)
+            filters = fetch_doc_filters(session, doc_id)
+            variables = fetch_variables(session, doc_id)
+            dataproviders = fetch_dataproviders(session, doc_id)
+            visualizations = fetch_visualization_counts(session, doc_id)
+            sql_queries = fetch_query_plans_sql(session, doc_id)
 
-        results.append({
-            "id":            doc_id,
-            "name":          doc["name"],
-            "cuid":          cuid,
-            "folder_path":folder_path,
-            "dimensions":    dims,
-            "measures":      measures,
-            "filters":       filters,
-            "variables":     variables,
-            "dataproviders": dataproviders,
-        })
+            results.append({
+                "id":            doc_id,
+                "name":          doc["name"],
+                "cuid":          cuid,
+                "folder_path":folder_path,
+                "dimensions":    dims,
+                "measures":      measures,
+                "filters":       filters,
+                "variables":     variables,
+                "dataproviders": dataproviders,
+                "visualizations": visualizations,
+                "sql":           sql_queries,
+            })
+            set_progress(idx, total_docs, "running")
+    finally:
+        set_progress(total_docs, total_docs, "idle")
 
     print(f"[METADATA] Done — collected metadata and filters for "
           f"{len(results)} documents.")

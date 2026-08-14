@@ -289,11 +289,12 @@ def get_license_information(session):
 
     query = """
     SELECT
+        SI_ID,
         SI_LICENSE_COUNT,
         SI_LICENSE_TYPE,
         SI_EXPIRY_DATE
     FROM CI_SYSTEMOBJECTS
-    WHERE SI_PROGID='CrystalEnterprise.LicenseKey'
+    WHERE SI_KIND='LicenseKey'
     """
 
     entries = run_paginated_cmsquery(session, query)
@@ -303,23 +304,38 @@ def get_license_information(session):
     expiry_dates = []
 
     for e in entries:
+        # Support both uppercase and lowercase keys returned from JSON
+        count_val = e.get("SI_LICENSE_COUNT") or e.get("si_license_count") or 0
+        type_val = e.get("SI_LICENSE_TYPE") or e.get("si_license_type") or -1
+        
+        try:
+            count = int(count_val)
+            license_type = int(type_val)
+        except (ValueError, TypeError):
+            count = 0
+            license_type = -1
 
-        count = int(e.get("SI_LICENSE_COUNT", 0))
-        license_type = int(e.get("SI_LICENSE_TYPE", -1))
-
-        # Your environment mapping
+        # License type mapping: 0 = Named, 1 = Concurrent
         if license_type == 0:
             total_named += count
-
         elif license_type == 1:
             total_concurrent += count
 
-        expiry = e.get("SI_EXPIRY_DATE")
-
-        if isinstance(expiry, datetime):
-            # Ignore SAP permanent licenses (1999)
-            if expiry.year > 2005:
-                expiry_dates.append(expiry)
+        expiry = e.get("SI_EXPIRY_DATE") or e.get("si_expiry_date")
+        if expiry:
+            if isinstance(expiry, str):
+                try:
+                    # Clean up fractional seconds and timezone indicator (Z)
+                    # e.g., "2029-12-31T00:00:00.000Z" -> "2029-12-31T00:00:00"
+                    clean_expiry = expiry.rstrip('Z').split('.')[0]
+                    expiry_dt = datetime.strptime(clean_expiry, "%Y-%m-%dT%H:%M:%S")
+                    if expiry_dt.year > 2005:
+                        expiry_dates.append(expiry_dt)
+                except Exception:
+                    pass
+            elif isinstance(expiry, datetime):
+                if expiry.year > 2005:
+                    expiry_dates.append(expiry)
 
     if expiry_dates:
         earliest_expiry = min(expiry_dates).strftime("%d-%b-%Y")

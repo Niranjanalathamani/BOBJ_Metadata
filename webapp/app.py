@@ -225,21 +225,25 @@ def api_reports():
             print(f"[WARN] Failed to fetch schedule destinations: {exc}")
             schedule_destinations = {}
 
-        # Ensure we always have the four standard destination types
+        # Ensure we always have all standard destination types
         merged_destinations: dict[str, int | None] = {
             "Email": None,
             "FTP": None,
             "File System": None,
             "BI Inbox": None,
+            "SFTP": None,
+            "Other": None,
         }
         # Layer publication destinations on top
         for k, v in pub_destinations.items():
             if v is not None:
-                merged_destinations[k] = (merged_destinations.get(k) or 0) + v
+                target_key = "BI Inbox" if "inbox" in k.lower() else k
+                merged_destinations[target_key] = (merged_destinations.get(target_key) or 0) + v
         # Layer schedule destinations on top
         for k, v in schedule_destinations.items():
             if v is not None:
-                merged_destinations[k] = (merged_destinations.get(k) or 0) + v
+                target_key = "BI Inbox" if "inbox" in k.lower() else k
+                merged_destinations[target_key] = (merged_destinations.get(target_key) or 0) + v
 
         return jsonify({
             "types": [
@@ -259,6 +263,35 @@ def api_reports():
             ],
         })
     except Exception as exc:  # noqa: BLE001
+        return error_response(exc)
+
+
+@app.route("/api/schedule-destinations")
+def api_schedule_destinations():
+    try:
+        session = get_session()
+        schedule_destinations = schedules.get_schedule_destination_counts(session)
+        pub_destinations = publications.get_destination_type_counts(session)
+
+        merged_destinations = {
+            "Email": 0,
+            "FTP": 0,
+            "File System": 0,
+            "BI Inbox": 0,
+            "SFTP": 0,
+            "Other": 0
+        }
+        for k, v in pub_destinations.items():
+            if v is not None:
+                target_key = "BI Inbox" if "inbox" in k.lower() else k
+                merged_destinations[target_key] = merged_destinations.get(target_key, 0) + v
+        for k, v in schedule_destinations.items():
+            if v is not None:
+                target_key = "BI Inbox" if "inbox" in k.lower() else k
+                merged_destinations[target_key] = merged_destinations.get(target_key, 0) + v
+
+        return jsonify(merged_destinations)
+    except Exception as exc:
         return error_response(exc)
 
 
@@ -284,6 +317,16 @@ def api_reports_list():
     except Exception as exc:
         import traceback
         traceback.print_exc()
+        return error_response(exc)
+
+
+@app.route("/api/reports/crawl-progress")
+def api_reports_crawl_progress():
+    """Fetch live metadata crawl progress."""
+    try:
+        from modules import metadata
+        return jsonify(metadata.get_progress())
+    except Exception as exc:
         return error_response(exc)
 
 # @app.route("/api/reports/dataproviders")

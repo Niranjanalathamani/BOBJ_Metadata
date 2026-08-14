@@ -562,6 +562,7 @@
       <div style="display: flex; gap: 8px;">
         <button class="btn" id="run-btn">Run Assessment</button>
         <button class="btn" id="refresh-btn" style="background: #475569;">↻ Refresh</button>
+        <button class="btn" id="export-btn" onclick="exportToExcel()" style="background: #10847a;">⬇ Export to Excel</button>
         <button class="btn" id="logout-btn" style="background: var(--red);">Logout</button>
       </div>
     </div>
@@ -721,6 +722,7 @@
     async function runAssessment() {
       document.getElementById("run-btn").disabled = true;
       document.getElementById("refresh-btn").disabled = true;
+      document.getElementById("export-btn").disabled = true;
       setStatus("busy", "Running assessment…");
 
       try {
@@ -740,6 +742,7 @@
       } finally {
         document.getElementById("run-btn").disabled = false;
         document.getElementById("refresh-btn").disabled = false;
+        document.getElementById("export-btn").disabled = false;
       }
       sessionStorage.setItem("assessmentLoaded", "true");
       sessionStorage.setItem("reportInventory", JSON.stringify({}));
@@ -872,7 +875,7 @@
       setInline("sched-value", data.scheduledReports);
 
       // Show "Loading…" chips immediately, then fetch counts in background
-      const DEST_LABELS = ["Email", "FTP", "File System", "BI Inbox"];
+      const DEST_LABELS = ["Email", "FTP", "File System", "BI Inbox", "SFTP", "Other"];
       
       if (cachedDests) {
         document.getElementById("destination-chips").innerHTML = DEST_LABELS.map(label => {
@@ -1060,6 +1063,220 @@
       const el = document.getElementById("status-pill");
       el.className = "status-pill " + kind;
       el.innerHTML = `<span class="dot"></span>${text}`;
+    }
+
+    function exportToExcel() {
+      const platStr = sessionStorage.getItem("platformData");
+      const univStr = sessionStorage.getItem("universeData");
+      const repStr = sessionStorage.getItem("reportData");
+      const destStr = sessionStorage.getItem("destinationData");
+
+      if (!platStr || !univStr || !repStr) {
+        alert("Please run the assessment first to load data before exporting.");
+        return;
+      }
+
+      const plat = JSON.parse(platStr);
+      const univ = JSON.parse(univStr);
+      const rep = JSON.parse(repStr);
+      const dest = destStr ? JSON.parse(destStr) : {};
+
+      let html = `
+      <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+      <head>
+          <meta charset="utf-8">
+          <!--[if gte mso 9]>
+          <xml>
+              <x:ExcelWorkbook>
+                  <x:ExcelWorksheets>
+                      <x:ExcelWorksheet>
+                          <x:Name>Environment Overview</x:Name>
+                          <x:WorksheetOptions>
+                              <x:DisplayGridlines/>
+                          </x:WorksheetOptions>
+                      </x:ExcelWorksheet>
+                  </x:ExcelWorksheets>
+              </x:ExcelWorkbook>
+          </xml>
+          <![endif]-->
+          <style>
+              table { border-collapse: collapse; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin-bottom: 20px; }
+              th { background-color: #10847a; color: #ffffff; font-weight: bold; border: 1px solid #CBD5E1; padding: 10px; text-align: left; }
+              td { border: 1px solid #CBD5E1; padding: 8px; vertical-align: top; font-size: 13px; color: #334155; }
+              .bold { font-weight: bold; }
+          </style>
+      </head>
+      <body>
+          <h2>SAP BusinessObjects Environment Inventory Overview</h2>
+          <br/>
+          
+          <!-- Platform Overview Table -->
+          <table>
+              <thead>
+                  <tr>
+                      <th colspan="2">Platform Overview</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr>
+                      <td><b>BI Version</b></td>
+                      <td>${plat.biVersion || "Not configured"}</td>
+                  </tr>
+                  <tr>
+                      <td><b>Total Users</b></td>
+                      <td>${plat.totalUsers ? plat.totalUsers.count : "—"} (Enabled: ${plat.totalUsers ? plat.totalUsers.enabled : 0}, Disabled: ${plat.totalUsers ? plat.totalUsers.disabled : 0}, Recent Login 90d: ${plat.totalUsers ? plat.totalUsers.recentLogin : 0})</td>
+                  </tr>
+                  <tr>
+                      <td><b>License Keys</b></td>
+                      <td>Total Keys: ${plat.licenseKeys ? plat.licenseKeys.totalKeys : 0} (Named: ${plat.licenseKeys ? plat.licenseKeys.named : 0}, Concurrent: ${plat.licenseKeys ? plat.licenseKeys.concurrent : 0}, Expiry: ${plat.licenseKeys ? plat.licenseKeys.expiry : "—"})</td>
+                  </tr>
+              </tbody>
+          </table>
+          <br/>
+
+          <!-- Connections & Authentication Table -->
+          <table>
+              <thead>
+                  <tr>
+                      <th>Category</th>
+                      <th>Connection / Provider</th>
+                      <th>Count / Users</th>
+                  </tr>
+              </thead>
+              <tbody>
+      `;
+
+      if (plat.relationalConnections && plat.relationalConnections.details) {
+          Object.entries(plat.relationalConnections.details).forEach(([db, count]) => {
+              html += `<tr><td>Relational Connection</td><td>${db}</td><td>${count}</td></tr>`;
+          });
+      }
+      if (plat.olapConnections && plat.olapConnections.details) {
+          Object.entries(plat.olapConnections.details).forEach(([db, count]) => {
+              html += `<tr><td>OLAP Connection</td><td>${db}</td><td>${count}</td></tr>`;
+          });
+      }
+      if (plat.authTypes && plat.authTypes.details) {
+          Object.entries(plat.authTypes.details).forEach(([provider, count]) => {
+              html += `<tr><td>Authentication Type</td><td>${provider}</td><td>${count}</td></tr>`;
+          });
+      }
+
+      html += `
+              </tbody>
+          </table>
+          <br/>
+
+          <!-- Universe Inventory Table -->
+          <table>
+              <thead>
+                  <tr>
+                      <th>Universe Category</th>
+                      <th>Type / Source</th>
+                      <th>Count</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr>
+                      <td><b>Total Universes</b></td>
+                      <td>All</td>
+                      <td>${univ.total || 0}</td>
+                  </tr>
+      `;
+
+      if (univ.byType) {
+          univ.byType.forEach(item => {
+              html += `<tr><td>Universe Type</td><td>${item.label}</td><td>${item.value}</td></tr>`;
+          });
+      }
+      if (univ.bySource) {
+          univ.bySource.forEach(item => {
+              html += `<tr><td>Universe Source</td><td>${item.label}</td><td>${item.value}</td></tr>`;
+          });
+      }
+
+      html += `
+                  <tr>
+                      <td><b>Linked Universes</b></td>
+                      <td>Kernel</td>
+                      <td>${univ.linked || 0}</td>
+                  </tr>
+              </tbody>
+          </table>
+          <br/>
+
+          <!-- Report Inventory Table -->
+          <table>
+              <thead>
+                  <tr>
+                      <th>Inventory Category</th>
+                      <th>Subtype</th>
+                      <th>Count</th>
+                  </tr>
+              </thead>
+              <tbody>
+      `;
+
+      if (rep.types) {
+          rep.types.forEach(item => {
+              html += `<tr><td>Report Type</td><td>${item.label}</td><td>${item.value ?? 0}</td></tr>`;
+          });
+      }
+
+      html += `
+                  <tr>
+                      <td><b>Publications</b></td>
+                      <td>Total Publications</td>
+                      <td>${rep.publications ?? 0}</td>
+                  </tr>
+                  <tr>
+                      <td><b>Schedules</b></td>
+                      <td>Total Scheduled Reports</td>
+                      <td>${rep.scheduledReports ?? 0}</td>
+                  </tr>
+              </tbody>
+          </table>
+          <br/>
+
+          <!-- Destinations & Events Table -->
+          <table>
+              <thead>
+                  <tr>
+                      <th>Category</th>
+                      <th>Type</th>
+                      <th>Count</th>
+                  </tr>
+              </thead>
+              <tbody>
+      `;
+
+      const DEST_LABELS = ["Email", "FTP", "File System", "BI Inbox", "SFTP", "Other"];
+      DEST_LABELS.forEach(label => {
+          html += `<tr><td>Destination</td><td>${label}</td><td>${dest[label] ?? 0}</td></tr>`;
+      });
+
+      if (rep.events) {
+          rep.events.forEach(item => {
+              html += `<tr><td>Event</td><td>${item.label}</td><td>${item.value ?? 0}</td></tr>`;
+          });
+      }
+
+      html += `
+              </tbody>
+          </table>
+      </body>
+      </html>
+      `;
+
+      const blob = new Blob([html], { type: "application/vnd.ms-excel;charset=utf-8;" });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", "BOBJ_Environment_Overview.xls");
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
 
     // Restore UI state after page navigation/back.
