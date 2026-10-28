@@ -14,10 +14,11 @@ Then open:
     http://localhost:5000
 """
 
-from flask import Flask, jsonify, send_from_directory, request
+from flask import Flask, jsonify, send_from_directory, request  # type: ignore[reportMissingImports]
 
 import config
 import atexit
+import traceback
 from auth import BOBJSession
 from modules import universes
 from modules import connections
@@ -29,11 +30,9 @@ from modules import metadata
 from modules import report_details
 from modules import datafilters
 
-
-
 from threading import Lock
 import io
-from flask import send_file
+from flask import send_file  # type: ignore[reportMissingImports]
 
 
 app = Flask(__name__, static_folder="static", static_url_path="")
@@ -64,17 +63,17 @@ def get_session(force: bool = False) -> BOBJSession:
 
 
 def error_response(exc: Exception, status: int = 502):
+    traceback.print_exc()
     return jsonify({"error": str(exc)}), status
-
 
 
 @app.route("/reports")
 def report_details_page():
-
     return send_from_directory(
         "static",
         "reports.html"
     )
+
 # ── Static frontend ──────────────────────────────────────────────
 @app.route("/")
 def index():
@@ -119,61 +118,44 @@ def api_platform():
     try:
         session = get_session()
 
-        #
         # User information (queried once)
-        #
         user_summary = inventory.get_user_summary(session)
 
         auth_details = {}
-
         if user_summary["enterprise"] > 0:
             auth_details["Enterprise"] = user_summary["enterprise"]
-
         if user_summary["windows"] > 0:
             auth_details["Windows AD"] = user_summary["windows"]
-
         if user_summary["ldap"] > 0:
             auth_details["LDAP"] = user_summary["ldap"]
-
         if user_summary["sap"] > 0:
             auth_details["SAP"] = user_summary["sap"]
 
-        #
         # Connections
-        #
         all_connections = connections.get_connections(session)
         ds_split = connections.split_by_datasource_type(all_connections)
 
         return jsonify({
-
             "biVersion": inventory.get_bi_version(session),
-
             "relationalConnections": ds_split["relational"],
-
             "olapConnections": ds_split["olap"],
-
             "authTypes": {
                 "count": len(auth_details),
                 "details": auth_details
             },
-
             "totalUsers": {
                 "count": user_summary["total"],
                 "enabled": user_summary["enabled"],
                 "disabled": user_summary["disabled"],
                 "recentLogin": user_summary["recentLogin"]
             },
-
             "licenseKeys": inventory.get_license_information(session)
-
         })
 
     except Exception as exc:
-        import traceback
-        traceback.print_exc()
         return error_response(exc)
 
-#── API: Universe Inventory (DISABLED) ──────────────────────────
+#── API: Universe Inventory ──────────────────────────────────────
 @app.route("/api/universes")
 def api_universes():
     try:
@@ -197,10 +179,8 @@ def api_universes():
             ],
             "linked": linked,
         })
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         return error_response(exc)
-
-
 
 
 # ── API: Reports Inventory ───────────────────────────────────────
@@ -216,9 +196,19 @@ def api_reports():
         lumira = reports.get_lumira_reports(session)
 
         pubs = publications.get_publications(session)
-        pub_destinations = publications.get_destination_type_counts(session)
+        try:
+            pub_destinations = publications.get_destination_type_counts(session)
+        except Exception as exc:
+            print(f"[WARN] Failed to fetch publication destinations: {exc}")
+            pub_destinations = {}
+
         sched_summary = schedules.get_schedule_summary(session)
-        events = schedules.get_event_counts(session)
+        try:
+            events = schedules.get_event_counts(session)
+        except Exception as exc:
+            print(f"[WARN] Failed to fetch events: {exc}")
+            events = {}
+
         try:
             schedule_destinations = schedules.get_schedule_destination_counts(session)
         except Exception as exc:
@@ -262,7 +252,7 @@ def api_reports():
                 {"label": k, "value": v} for k, v in events.items()
             ],
         })
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         return error_response(exc)
 
 
@@ -270,8 +260,17 @@ def api_reports():
 def api_schedule_destinations():
     try:
         session = get_session()
-        schedule_destinations = schedules.get_schedule_destination_counts(session)
-        pub_destinations = publications.get_destination_type_counts(session)
+        try:
+            schedule_destinations = schedules.get_schedule_destination_counts(session)
+        except Exception as exc:
+            print(f"[WARN] Failed fetching schedule destinations: {exc}")
+            schedule_destinations = {}
+
+        try:
+            pub_destinations = publications.get_destination_type_counts(session)
+        except Exception as exc:
+            print(f"[WARN] Failed fetching publication destinations: {exc}")
+            pub_destinations = {}
 
         merged_destinations = {
             "Email": 0,
@@ -303,20 +302,56 @@ def api_reports_metadata():
         results = metadata.get_all_metadata(session)
         return jsonify(results)
     except Exception as exc:
-        import traceback
-        traceback.print_exc()
         return error_response(exc)
 
 
 @app.route("/api/reports/list")
 def api_reports_list():
-    """Fetch report inventory grouped by type with WebI metadata."""
+    """
+    Fetch report inventory evaluated folder by folder.
+    Query params:
+      - folder_path: Optional filter for a specific folder path
+      - group_by: "folder" (default) or "type"
+      - force: "true" to bypass cache and re-crawl folder by folder
+    """
     try:
         session = get_session()
-        return jsonify(report_details.get_report_list(session))
+        folder_path = request.args.get("folder_path", default=None, type=str)
+        group_by = request.args.get("group_by", default="folder", type=str)
+        force = request.args.get("force", default="false", type=str).lower() == "true"
+        return jsonify(report_details.get_report_list(session, folder_path=folder_path, force=force, group_by=group_by))
     except Exception as exc:
-        import traceback
-        traceback.print_exc()
+        return error_response(exc)
+
+
+@app.route("/api/reports/folders")
+def api_reports_folders():
+    """Quick summary of all folders and report counts without deep Raylight extraction."""
+    try:
+        session = get_session()
+        from modules.path import build_folder_map, get_report_folder_path
+        from modules.metadata import fetch_webi_documents
+        from modules.report_details import get_non_webi_reports_list
+
+        folder_map = build_folder_map(session)
+        webi_docs = fetch_webi_documents(session)
+        non_webi = get_non_webi_reports_list(session, folder_map)
+
+        counts = {}
+        for d in webi_docs:
+            p = get_report_folder_path(d, folder_map)
+            counts[p] = counts.get(p, 0) + 1
+        for d in non_webi:
+            p = d.get("folder_path") or "/"
+            counts[p] = counts.get(p, 0) + 1
+
+        folder_list = [{"folder_path": k, "report_count": v} for k, v in sorted(counts.items())]
+        return jsonify({
+            "total_folders": len(folder_list),
+            "total_reports": len(webi_docs) + len(non_webi),
+            "folders": folder_list
+        })
+    except Exception as exc:
         return error_response(exc)
 
 
@@ -329,30 +364,20 @@ def api_reports_crawl_progress():
     except Exception as exc:
         return error_response(exc)
 
-# @app.route("/api/reports/dataproviders")
-# def api_report_dataproviders():
-#     try:
-#         session = get_session()
-#         return jsonify(dataprovider.get_all_dataproviders(session))
-#     except Exception as exc:
-#         return error_response(exc)
-
 
 if __name__ == "__main__":
     app.run(
         host="127.0.0.1",
         port=5000,
         debug=True,
+        threaded=True,
         use_reloader=False
     )
 
 def cleanup():
-
     global _session
     if _session:
-
         print("Logging off BusinessObjects...")
-
         try:
             _session.logoff()
         except Exception:

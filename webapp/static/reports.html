@@ -118,35 +118,6 @@
             align-items: center;
         }
 
-        .crawl-status-bar {
-            max-width: 95%;
-            margin: 12px auto 0;
-            padding: 0 28px;
-            display: none;
-        }
-
-        .crawl-status-inner {
-            background: #FFF8E1;
-            border: 1px solid #FFD54F;
-            border-radius: 9px;
-            padding: 10px 16px;
-            font-size: 13px;
-            color: #5D4037;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .crawl-spinner {
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            border: 2px solid #FFD54F;
-            border-top-color: #F57F17;
-            animation: spin .7s linear infinite;
-            flex-shrink: 0;
-        }
-
         .search-wrap {
             position: relative;
             flex: 1;
@@ -195,9 +166,9 @@
             align-items: center;
             justify-content: space-between;
             gap: 10px;
-            background: var(--red-bg);
+            background: #FEF2F2;
             border: 1px solid #F3B4B4;
-            color: var(--red);
+            color: #991B1B;
         }
 
         /* Loading / Spinner State */
@@ -215,8 +186,8 @@
         }
 
         .spinner {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             border: 4px solid var(--blue-light);
             border-top-color: var(--blue);
@@ -269,7 +240,7 @@
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            margin-bottom: 16px;
+            margin-bottom: 18px;
             box-shadow: var(--shadow);
             overflow: hidden;
             transition: var(--transition);
@@ -281,29 +252,36 @@
 
         .accordion-header {
             width: 100%;
-            background: none;
-            border: none;
-            padding: 20px 24px;
+            background: #FAFCFE;
+            border-bottom: 1px solid transparent;
+            padding: 16px 22px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
             text-align: left;
-            outline: none;
+            user-select: none;
             transition: var(--transition);
+            gap: 14px;
         }
 
         .accordion-header:hover {
             background-color: var(--blue-light);
         }
 
+        .accordion-item.expanded .accordion-header {
+            border-bottom-color: var(--border);
+            background: #F1F6FB;
+        }
+
         .accordion-title {
             font-family: 'Sora', sans-serif;
-            font-size: 16.5px;
+            font-size: 15.5px;
             font-weight: 700;
             color: var(--navy);
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
             gap: 12px;
         }
 
@@ -312,16 +290,65 @@
             color: #fff;
             font-size: 12px;
             font-weight: 700;
-            padding: 4px 10px;
+            padding: 3px 10px;
             border-radius: 20px;
             min-width: 24px;
             text-align: center;
         }
 
-        .chevron {
+        .folder-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .btn-folder-export {
+            background: #10847a;
+            color: #ffffff;
+            border: none;
+            border-radius: 7px;
+            padding: 6px 14px;
             font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+
+        .btn-folder-export:hover {
+            background: #0d6e66;
+            transform: translateY(-1px);
+        }
+
+        .btn-folder-refresh {
+            background: #EFF6FF;
+            color: #1D4ED8;
+            border: 1px solid #BFDBFE;
+            border-radius: 7px;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .btn-folder-refresh:hover {
+            background: #DBEAFE;
+        }
+
+        .chevron {
+            font-size: 13px;
             color: var(--muted);
             transition: transform 0.25s ease;
+            display: inline-block;
+            margin-left: 4px;
         }
 
         .accordion-item.expanded .chevron {
@@ -330,7 +357,6 @@
 
         .accordion-content {
             display: none;
-            border-top: 1px solid var(--border);
             background-color: #FAFBFD;
         }
 
@@ -351,7 +377,7 @@
             min-width: 100%;
         }
 
-        .col-name { width: 12%; min-width: 120px; }
+        .col-name { width: 14%; min-width: 130px; }
         .col-folder { width: 12%; min-width: 120px; }
         .col-complexity { width: 8%; min-width: 80px; }
         .col-id { width: 6%; min-width: 60px; }
@@ -361,6 +387,8 @@
         .col-vars { width: 10%; min-width: 90px; }
         .col-formulas { width: 14%; min-width: 150px; }
         .col-filters { width: 10%; min-width: 100px; }
+        .col-visualizations { width: 8%; min-width: 90px; }
+        .col-sql { width: 8%; min-width: 90px; }
         .col-actions { width: 8%; min-width: 90px; text-align: center; }
 
         .pill-high {
@@ -399,140 +427,115 @@
 
         .report-row {
             border-bottom: 1px solid var(--border);
-            transition: var(--transition);
-        }
-
-        .report-row:last-child {
-            border-bottom: none;
+            transition: background 0.15s ease;
         }
 
         .report-row:hover {
-            background-color: #F8FAFC;
+            background-color: #F1F5F9;
         }
 
         .report-row td {
-            padding: 12px 16px;
+            padding: 14px 18px;
+            vertical-align: middle;
             font-size: 13.5px;
-            vertical-align: top;
-            max-width: 280px;
         }
 
         .report-name-cell {
             font-weight: 600;
             color: var(--navy);
-            min-width: 160px;
         }
 
         .report-id-cell {
-            font-family: 'SFMono-Regular', Consolas, monospace;
+            font-family: monospace;
             font-size: 12px;
             color: var(--muted);
-            min-width: 80px;
         }
 
-        /* Pills & Badges System */
         .pills-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 4px;
+            gap: 6px;
             align-items: center;
         }
 
         .pill-tag {
-            display: inline-flex;
-            align-items: center;
+            font-size: 11px;
+            font-weight: 500;
             padding: 3px 8px;
             border-radius: 6px;
-            font-size: 11.5px;
-            font-weight: 500;
-            line-height: 1.3;
-            white-space: normal;
-            word-break: break-word;
-            border: 1px solid transparent;
+            background: #E2E8F0;
+            color: #334155;
+            border: 1px solid #CBD5E1;
+            white-space: nowrap;
         }
 
         .pill-dim {
-            background-color: #EFF6FF;
+            background: #EFF6FF;
             color: #1D4ED8;
             border-color: #BFDBFE;
         }
 
         .pill-measure {
-            background-color: #ECFDF5;
-            color: #047857;
-            border-color: #A7F3D0;
+            background: #F0FDF4;
+            color: #15803D;
+            border-color: #BBF7D0;
         }
 
         .pill-var {
-            background-color: #F5F3FF;
-            color: #6D28D9;
-            border-color: #DDD6FE;
+            background: #FAF5FF;
+            color: #7E22CE;
+            border-color: #E9D5FF;
         }
 
         .pill-filter {
-            background-color: #FFFBEB;
-            color: #B45309;
-            border-color: #FDE68A;
+            background: #FFF7ED;
+            color: #C2410C;
+            border-color: #FED7AA;
         }
 
         .pill-more {
-            background-color: #F3F4F6;
-            color: #4B5563;
-            border-color: #E5E7EB;
             cursor: pointer;
+            background: #F1F5F9;
+            color: var(--muted);
+            border: 1px dashed #CBD5E1;
+            font-size: 10.5px;
             font-weight: 600;
-            transition: all 0.15s ease;
         }
 
         .pill-more:hover {
-            background-color: #E5E7EB;
-            color: #1F2937;
-        }
-
-        .formula-block {
-            font-family: 'SFMono-Regular', Consolas, monospace;
-            font-size: 11.5px;
-            background: #F8FAFC;
-            color: #0F172A;
-            border: 1px solid #E2E8F0;
-            border-left: 3px solid #2A5C8A;
-            padding: 5px 8px;
-            border-radius: 5px;
-            word-break: break-all;
-            max-height: 90px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-            line-height: 1.4;
+            background: #E2E8F0;
+            color: var(--text);
         }
 
         .btn-view-details {
-            padding: 5px 10px;
-            font-size: 11.5px;
-            font-weight: 600;
-            color: var(--blue);
             background: var(--blue-light);
-            border: 1px solid #C9DDEF;
+            border: 1px solid #BFDBFE;
+            color: var(--blue);
+            padding: 6px 12px;
             border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: var(--transition);
             white-space: nowrap;
         }
 
         .btn-view-details:hover {
             background: var(--blue);
-            color: #ffffff;
+            color: #fff;
+            border-color: var(--blue);
         }
 
-        /* Modal Overlay */
+        /* Detail Modal */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(15, 23, 42, 0.5);
-            backdrop-filter: blur(4px);
-            z-index: 1000;
+            background: rgba(16, 32, 55, 0.45);
+            backdrop-filter: blur(3px);
+            z-index: 100;
             display: none;
             align-items: center;
             justify-content: center;
@@ -544,125 +547,83 @@
         }
 
         .modal-card {
-            background: #ffffff;
+            background: var(--card);
             border-radius: 14px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
             width: 100%;
             max-width: 800px;
             max-height: 85vh;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            border: 1px solid var(--border);
+            animation: modalFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(12px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         .modal-header {
-            padding: 18px 24px;
-            background: linear-gradient(135deg, var(--navy), var(--blue));
-            color: #ffffff;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: space-between;
-        }
-
-        .modal-header h3 {
-            margin: 0;
-            font-family: 'Sora', sans-serif;
-            font-size: 17px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .modal-close-btn {
-            background: rgba(255, 255, 255, 0.15);
-            border: none;
-            color: #fff;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            font-size: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition);
-        }
-
-        .modal-close-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .modal-body {
-            padding: 20px 24px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .modal-section {
-            background: #F8FAFC;
-            border: 1px solid #E2E8F0;
-            border-radius: 9px;
-            padding: 14px 16px;
-        }
-
-        .modal-section-title {
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: var(--navy);
-            letter-spacing: 0.5px;
-            margin-bottom: 10px;
-        }
-
-        .action-link {
-            color: var(--blue);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 13px;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            transition: var(--transition);
-        }
-
-        .action-link:hover {
-            color: var(--navy);
-            text-decoration: underline;
-        }
-
-        .load-more-footer {
-            padding: 20px 24px;
-            text-align: center;
-            border-top: 1px solid var(--border);
             background: #FAFBFD;
         }
 
-        .load-more-btn {
-            background: linear-gradient(135deg, var(--blue), var(--navy));
-            color: #fff;
+        .modal-header h3 {
+            font-family: 'Sora', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--navy);
+            margin: 0;
+        }
+
+        .modal-close-btn {
+            background: none;
             border: none;
-            padding: 11px 28px;
-            border-radius: 9px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: inherit;
-            transition: var(--transition);
-            box-shadow: 0 2px 8px rgba(42, 92, 138, 0.25);
-        }
-
-        .load-more-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 14px rgba(42, 92, 138, 0.35);
-        }
-
-        .load-more-info {
-            font-size: 12.5px;
+            font-size: 18px;
             color: var(--muted);
-            margin-top: 8px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 6px;
+        }
+
+        .modal-close-btn:hover {
+            background: #E2E8F0;
+            color: var(--text);
+        }
+
+        .modal-body {
+            padding: 24px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .modal-section-title {
+            font-size: 12.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+
+        .formula-block {
+            background: #F8FAFC;
+            border: 1px solid var(--border);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 12px;
+            color: #334155;
+            white-space: pre-wrap;
+            word-break: break-all;
         }
     </style>
 </head>
@@ -673,7 +634,7 @@
         <div class="topbar-inner">
             <div>
                 <h1>Reports Inventory</h1>
-                <p>All BusinessObjects documents categorized by report type</p>
+                <p>Browse BusinessObjects documents grouped folder by folder &bull; View details, dimensions, measures, variables and SQL</p>
             </div>
             <button class="back-btn" onclick="history.back()">← Back to Overview</button>
         </div>
@@ -685,23 +646,17 @@
                 <circle cx="11" cy="11" r="7" />
                 <path d="M21 21l-4.3-4.3" />
             </svg>
-            <input type="text" id="searchInput" placeholder="Search by report name or ID…" oninput="handleSearch()">
+            <input type="text" id="searchInput" placeholder="Search by report name, ID, or folder…" oninput="handleSearch()">
         </div>
-        <button class="refresh-btn" id="refreshBtn" onclick="loadReports(true)">↻ Refresh</button>
+        <button class="refresh-btn" id="toggleAllBtn" onclick="toggleAllGroups()" style="background: #475569; border-color: #475569;">⊟ Collapse All</button>
+        <button class="refresh-btn" id="refreshBtn" onclick="loadReports(true)">↻ Refresh All</button>
         <button class="refresh-btn" id="exportBtn" onclick="exportToExcel()" style="background: #10847a; border-color: #10847a;">⬇ Export to Excel</button>
-    </div>
-
-    <div class="crawl-status-bar" id="crawlStatusBar">
-        <div class="crawl-status-inner">
-            <div class="crawl-spinner"></div>
-            <span id="crawlStatusText">WebI crawl is running — fetching dimensions &amp; measures…</span>
-        </div>
     </div>
 
     <div class="container" id="mainContainer">
         <div class="loading-state">
             <div class="spinner"></div>
-            <p id="loadingMessage">Loading reports...</p>
+            <p id="loadingMessage">Loading reports inventory & metadata...</p>
         </div>
     </div>
 
@@ -721,6 +676,7 @@
         let reportGroups = {};
         let activeSearch = "";
         let reportsById = {};
+        let allExpanded = true;
 
         async function init() {
             await loadReports();
@@ -728,20 +684,6 @@
 
         async function loadReports(forceRefresh = false) {
             const container = document.getElementById("mainContainer");
-
-            if (!forceRefresh) {
-                const cached = sessionStorage.getItem("reportsList");
-                if (cached) {
-                    try {
-                        reportGroups = JSON.parse(cached);
-                        renderUI();
-                        return;
-                    } catch (e) {
-                        console.error("Error parsing cached reports list:", e);
-                    }
-                }
-            }
-
             container.innerHTML = `
                 <div class="loading-state">
                     <div class="spinner"></div>
@@ -749,30 +691,13 @@
                 </div>
             `;
 
-            let progressInterval = setInterval(async () => {
-                try {
-                    const progressRes = await fetch("/api/reports/crawl-progress");
-                    if (progressRes.ok) {
-                        const progressData = await progressRes.json();
-                        if (progressData.status === "running" && progressData.total > 0) {
-                            const loadingMsgEl = document.getElementById("loadingMessage");
-                            if (loadingMsgEl) {
-                                loadingMsgEl.textContent = `Loading report details & metadata... (${progressData.current}/${progressData.total} reports)`;
-                            }
-                        }
-                    }
-                } catch (e) {
-                    console.error("Error fetching progress:", e);
-                }
-            }, 800);
-
             try {
-                const res = await fetch("/api/reports/list");
+                const url = forceRefresh ? "/api/reports/list?force=true" : "/api/reports/list";
+                const res = await fetch(url);
                 if (!res.ok) {
                     throw new Error(`Server returned ${res.status}`);
                 }
                 reportGroups = await res.json();
-                sessionStorage.setItem("reportsList", JSON.stringify(reportGroups));
                 renderUI();
             } catch (err) {
                 console.error(err);
@@ -782,8 +707,6 @@
                         <a href="javascript:void(0)" onclick="loadReports(true)" style="color: inherit; font-weight: bold; text-decoration: underline;">Retry</a>
                     </div>
                 `;
-            } finally {
-                clearInterval(progressInterval);
             }
         }
 
@@ -792,6 +715,20 @@
             if (item) {
                 item.classList.toggle("expanded");
             }
+        }
+
+        function toggleAllGroups() {
+            allExpanded = !allExpanded;
+            const items = document.querySelectorAll(".accordion-item");
+            items.forEach(item => {
+                if (allExpanded) {
+                    item.classList.add("expanded");
+                } else {
+                    item.classList.remove("expanded");
+                }
+            });
+            const btn = document.getElementById("toggleAllBtn");
+            if (btn) btn.textContent = allExpanded ? "⊟ Collapse All" : "⊞ Expand All";
         }
 
         function handleSearch() {
@@ -848,7 +785,7 @@
 
             if (hiddenItems.length > 0) {
                 const uid = 'more-' + Math.random().toString(36).substr(2, 9);
-                html += `<span class="pill-tag pill-more" id="${uid}-btn" onclick="toggleMorePills('${uid}')">+${hiddenItems.length} more</span>`;
+                html += `<span class="pill-tag pill-more" id="${uid}-btn" onclick="toggleMorePills('${uid}', event)">+${hiddenItems.length} more</span>`;
                 html += `<span id="${uid}-extra" style="display:none;" class="pills-container">`;
                 hiddenItems.forEach(item => {
                     html += `<span class="pill-tag ${pillClass}">${esc(item)}</span>`;
@@ -859,65 +796,72 @@
             return html;
         }
 
-        function toggleMorePills(uid) {
+        function toggleMorePills(uid, event) {
+            if (event) event.stopPropagation();
             const extra = document.getElementById(uid + '-extra');
             const btn = document.getElementById(uid + '-btn');
             if (extra) {
-                extra.style.display = 'inline-flex';
-                extra.style.flexWrap = 'wrap';
-                extra.style.gap = '4px';
-            }
-            if (btn) {
-                btn.style.display = 'none';
+                const isHidden = extra.style.display === "none";
+                extra.style.display = isHidden ? "inline-flex" : "none";
+                if (btn) btn.style.display = isHidden ? "none" : "inline-block";
             }
         }
 
-        function renderFormulas(data) {
-            const formulas = parseList(data);
-            if (formulas.length === 0) return '<span style="color:var(--muted); font-size:12px;">—</span>';
-            return formulas.map(f => `<div class="formula-block">${esc(f)}</div>`).join('<div style="height:4px"></div>');
-        }
+        function renderFormulas(formulas) {
+            if (!formulas || formulas.length === 0) return '<span style="color:var(--muted); font-size:12px;">—</span>';
+            const cleanFormulas = formulas.filter(Boolean);
+            if (cleanFormulas.length === 0) return '<span style="color:var(--muted); font-size:12px;">—</span>';
 
-        function renderVisualizations(val, isExcel = false) {
-            if (!val) return isExcel ? "—" : '<span style="color:var(--muted); font-size:12px;">—</span>';
-            const entries = Object.entries(val);
-            if (entries.length === 0) return isExcel ? "—" : '<span style="color:var(--muted); font-size:12px;">—</span>';
-            
-            if (isExcel) {
-                return entries.map(([tab, data]) => {
-                    const vis = (data && data.visualizations) !== undefined ? data.visualizations : 0;
-                    const tbl = (data && data.tables) !== undefined ? data.tables : 0;
-                    return `${tab} (V: ${vis}, T: ${tbl})`;
-                }).join(" | ");
-            }
-            
-            let html = '<div class="visualizations-container">';
-            entries.forEach(([tab, data]) => {
-                const vis = (data && data.visualizations) !== undefined ? data.visualizations : 0;
-                const tbl = (data && data.tables) !== undefined ? data.tables : 0;
-                html += `<div style="margin-bottom: 4px;">`;
-                html += `<span class="pill-tag pill-var" style="font-weight:600; font-size:11px; padding: 2px 6px; background-color: #F1F5F9; color: #475569; border-color: #CBD5E1;">${esc(tab)}: V: ${vis}, T: ${tbl}</span>`;
+            const first = cleanHex(cleanFormulas[0]);
+            let html = `<div class="formula-block">${esc(first)}</div>`;
+
+            if (cleanFormulas.length > 1) {
+                const uid = 'form-' + Math.random().toString(36).substr(2, 9);
+                html += `<span class="pill-tag pill-more" style="margin-top:4px;" id="${uid}-btn" onclick="toggleMorePills('${uid}', event)">+${cleanFormulas.length - 1} more formulas</span>`;
+                html += `<div id="${uid}-extra" style="display:none; margin-top:4px; flex-direction:column; gap:4px;">`;
+                cleanFormulas.slice(1).forEach(f => {
+                    html += `<div class="formula-block">${esc(cleanHex(f))}</div>`;
+                });
                 html += `</div>`;
-            });
-            html += '</div>';
+            }
             return html;
         }
 
-        function renderSQL(val) {
-            const queries = parseList(val);
-            if (queries.length === 0) return '<span style="color:var(--muted); font-size:12px;">—</span>';
-            
-            let html = '<div class="sql-container">';
-            queries.forEach((q, idx) => {
-                if (idx < 2) {
-                    const truncated = q.length > 40 ? q.substring(0, 37) + "..." : q;
-                    html += `<div class="formula-block" style="font-size:11px; margin-bottom:4px; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${esc(q)}">${esc(truncated)}</div>`;
-                }
-            });
-            if (queries.length > 2) {
-                html += `<div style="font-size:11px; color:var(--muted); font-style:italic;">+${queries.length - 2} more...</div>`;
+        function renderVisualizations(visData, plainText = false) {
+            if (!visData || Object.keys(visData).length === 0) {
+                return plainText ? "—" : '<span style="color:var(--muted); font-size:12px;">—</span>';
             }
-            html += '</div>';
+
+            let parts = [];
+            for (const [tab, counts] of Object.entries(visData)) {
+                const v = counts.visualizations || 0;
+                const t = counts.tables || 0;
+                parts.push(`${tab}: ${v} charts, ${t} tables`);
+            }
+
+            if (plainText) return parts.join(" | ");
+
+            return `
+                <div style="font-size:12px; color:var(--text);">
+                    ${parts.map(p => `<div>${esc(p)}</div>`).join("")}
+                </div>
+            `;
+        }
+
+        function renderSQL(sqlQueries) {
+            if (!sqlQueries || sqlQueries.length === 0) return '<span style="color:var(--muted); font-size:12px;">—</span>';
+            const first = sqlQueries[0];
+            let html = `<div class="formula-block" style="max-height:60px; overflow-y:auto;">${esc(first)}</div>`;
+
+            if (sqlQueries.length > 1) {
+                const uid = 'sql-' + Math.random().toString(36).substr(2, 9);
+                html += `<span class="pill-tag pill-more" style="margin-top:4px;" id="${uid}-btn" onclick="toggleMorePills('${uid}', event)">+${sqlQueries.length - 1} more queries</span>`;
+                html += `<div id="${uid}-extra" style="display:none; margin-top:4px; flex-direction:column; gap:4px;">`;
+                sqlQueries.slice(1).forEach(q => {
+                    html += `<div class="formula-block" style="max-height:80px; overflow-y:auto;">${esc(q)}</div>`;
+                });
+                html += `</div>`;
+            }
             return html;
         }
 
@@ -993,7 +937,7 @@
 
         function renderUI() {
             const container = document.getElementById("mainContainer");
-            const groupKeys = Object.keys(reportGroups);
+            const groupKeys = Object.keys(reportGroups).filter(k => k !== "_collection_meta" && Array.isArray(reportGroups[k]));
 
             if (groupKeys.length === 0) {
                 container.innerHTML = `
@@ -1013,13 +957,17 @@
             let totalRenderedGroups = 0;
             reportsById = {};
 
+            const q = activeSearch;
+
             for (const key of groupKeys) {
                 const reports = reportGroups[key] || [];
 
                 const filtered = reports.filter(r => {
+                    if (!q) return true;
                     const name = cleanHex(r.name || r.Name || r["Report Name"] || "").toLowerCase();
                     const id = String(r.id || r.ID || r["Report ID"] || "").toLowerCase();
-                    return name.includes(activeSearch) || id.includes(activeSearch);
+                    const folder = (r.folder_path || key).toLowerCase();
+                    return name.includes(q) || id.includes(q) || folder.includes(q);
                 });
 
                 if (filtered.length === 0) continue;
@@ -1030,18 +978,27 @@
                     if (rid) reportsById[rid] = r;
                 });
 
-                const safeKeyId = key.replace(/\s+/g, "-");
-                const isExpanded = activeSearch !== "" ? "expanded" : "";
+                const safeKeyId = key.replace(/[^a-zA-Z0-9_-]/g, "_");
+                const isExpanded = allExpanded || (q !== "");
+                const expandedClass = isExpanded ? "expanded" : "";
 
                 html += `
-                    <div class="accordion-item ${isExpanded}" id="group-${safeKeyId}">
-                        <button class="accordion-header" onclick="toggleGroup('${safeKeyId}')">
+                    <div class="accordion-item ${expandedClass}" id="group-${safeKeyId}">
+                        <div class="accordion-header" onclick="toggleGroup('${safeKeyId}')">
                             <span class="accordion-title">
-                                ${esc(key)}
-                                <span class="count-badge">${filtered.length}</span>
+                                <span>📁 ${esc(key)}</span>
+                                <span class="count-badge">${filtered.length} reports</span>
                             </span>
-                            <span class="chevron">\u25BC</span>
-                        </button>
+                            <div class="folder-header-actions" onclick="event.stopPropagation()">
+                                <button class="btn-folder-export" onclick="exportSingleFolder('${esc(key)}', event)" title="Export only this folder to Excel">
+                                    ⬇ Export Folder
+                                </button>
+                                <button class="btn-folder-refresh" onclick="refreshFolder('${esc(key)}', event)" title="Re-evaluate this folder">
+                                    ↻ Refresh
+                                </button>
+                                <span class="chevron" onclick="toggleGroup('${safeKeyId}')">▼</span>
+                            </div>
+                        </div>
                         <div class="accordion-content">
                             <div class="table-scroll-wrapper">
                                 <table class="report-table">
@@ -1078,7 +1035,7 @@
                                             return `
                                                 <tr class="report-row">
                                                     <td class="report-name-cell col-name">${esc(rName)}</td>
-                                                    <td class="col-folder" style="font-size:12.5px; color:var(--muted); word-break:break-all;">${esc(r.folder_path || "—")}</td>
+                                                    <td class="col-folder" style="font-size:12.5px; color:var(--muted); word-break:break-all;">${esc(r.folder_path || key || "—")}</td>
                                                     <td class="col-complexity"><span class="pill-tag pill-${complexity.toLowerCase()}">${esc(complexity)}</span></td>
                                                     <td class="report-id-cell col-id">${esc(rId)}</td>
                                                     <td class="col-provider">${renderPills(dataproviders, "pill-tag", 2)}</td>
@@ -1107,7 +1064,7 @@
                 container.innerHTML = `
                     <div class="empty-state">
                         <h3>No reports found</h3>
-                        <p>${activeSearch ? 'No reports match your search query.' : 'There are no reports loaded in the environment yet.'}</p>
+                        <p>${q ? 'No reports match your search query.' : 'There are no reports loaded in the environment yet.'}</p>
                     </div>
                 `;
             } else {
@@ -1121,7 +1078,54 @@
             return div.innerHTML;
         }
 
+        // ============================================
+        // EXPORT & REFRESH LOGIC
+        // ============================================
+
+        function exportSingleFolder(folderPath, event) {
+            if (event) event.stopPropagation();
+            const reports = reportGroups[folderPath];
+            if (!reports || reports.length === 0) {
+                alert(`No reports in folder "${folderPath}" to export.`);
+                return;
+            }
+            const safeName = folderPath.replace(/[^a-zA-Z0-9_-]/g, "_").replace(/^_+|_+$/g, "") || "Root";
+            downloadExcelForReports({ [folderPath]: reports }, `BOBJ_${safeName}_Reports.xls`);
+        }
+
+        async function refreshFolder(folderPath, event) {
+            if (event) event.stopPropagation();
+            const safeId = folderPath.replace(/[^a-zA-Z0-9_-]/g, "_");
+            const btn = event?.currentTarget;
+            const origText = btn ? btn.innerHTML : "";
+            if (btn) btn.innerHTML = "⏳ Evaluating...";
+
+            try {
+                const url = `/api/reports/list?folder_path=${encodeURIComponent(folderPath)}&force=true`;
+                const res = await fetch(url);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                if (data[folderPath]) {
+                    reportGroups[folderPath] = data[folderPath];
+                    renderUI();
+                }
+            } catch (err) {
+                alert(`Failed to refresh folder ${folderPath}: ${err.message}`);
+            } finally {
+                if (btn) btn.innerHTML = origText;
+            }
+        }
+
         function exportToExcel() {
+            const groupKeys = Object.keys(reportGroups).filter(k => k !== "_collection_meta" && Array.isArray(reportGroups[k]));
+            if (groupKeys.length === 0) {
+                alert("No reports available to export.");
+                return;
+            }
+            downloadExcelForReports(reportGroups, "BOBJ_Report_Inventory.xls");
+        }
+
+        function downloadExcelForReports(groupsMap, filename) {
             let html = `
             <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
             <head>
@@ -1146,14 +1150,13 @@
                     td { border: 1px solid #CBD5E1; padding: 8px; vertical-align: top; font-size: 13px; color: #334155; }
                     tr:nth-child(even) td { background-color: #F8FAFC; }
                     .report-name { font-weight: bold; color: #0F172A; }
-                    .metadata-list { margin: 0; padding-left: 20px; }
                 </style>
             </head>
             <body>
                 <table>
                     <thead>
                         <tr>
-                            <th>Report Type</th>
+                            <th>Folder / Group</th>
                             <th>Report Name</th>
                             <th>Folder Path</th>
                             <th>Complexity</th>
@@ -1171,7 +1174,8 @@
                     <tbody>
             `;
 
-            for (const [groupName, reports] of Object.entries(reportGroups)) {
+            for (const [groupName, reports] of Object.entries(groupsMap)) {
+                if (groupName === "_collection_meta" || !Array.isArray(reports)) continue;
                 reports.forEach(r => {
                     const name = cleanHex(r.name || r.Name || r["Report Name"] || "Unnamed Report");
                     const id = r.id || r.ID || r["Report ID"] || "";
@@ -1184,14 +1188,13 @@
                     const filters = parseList(r.filters || r.Filters).join(" | ");
                     const visualizations = renderVisualizations(r.visualizations || r.Visualizations, true);
                     const sqlQueries = parseList(r.sql || r.SQL).join(" \n\n ");
-
                     const complexity = getComplexity(r);
 
                     html += `
                         <tr>
                             <td>${esc(groupName)}</td>
                             <td class="report-name">${esc(name)}</td>
-                            <td>${esc(r.folder_path || "—")}</td>
+                            <td>${esc(r.folder_path || groupName || "—")}</td>
                             <td>${esc(complexity)}</td>
                             <td>${esc(id)}</td>
                             <td>${esc(dataproviders || "—")}</td>
@@ -1218,7 +1221,7 @@
             const link = document.createElement("a");
             const url = URL.createObjectURL(blob);
             link.setAttribute("href", url);
-            link.setAttribute("download", "BOBJ_Report_Inventory.xls");
+            link.setAttribute("download", filename);
             link.style.visibility = "hidden";
             document.body.appendChild(link);
             link.click();

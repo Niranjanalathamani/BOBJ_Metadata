@@ -8,7 +8,6 @@ If no doc IDs are provided, it will count for all WebI documents in the reposito
 import os
 import sys
 import xml.etree.ElementTree as ET
-import requests
 
 # Add parent directory to path so we can import auth, config, and modules
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -54,7 +53,7 @@ def main():
             counts = fetch_visualization_counts(session, doc_id)
             if not counts:
                 print(f"{doc_id:<12} | {'No tabs/elements found':<22} | {'0':<16} | {'0':<12}")
-            for tab_name, data in counts.items():
+            for tab_name, data in counts.items(): 
                 vis = data.get("visualizations", 0)
                 tbl = data.get("tables", 0)
                 print(f"{doc_id:<12} | {tab_name:<22} | {vis:<16} | {tbl:<12}")

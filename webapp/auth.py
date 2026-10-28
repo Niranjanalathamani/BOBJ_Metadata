@@ -5,16 +5,32 @@ Handles SAP BusinessObjects (BOBJ) login and logout via REST API.
 Stores the session token used by all other modules.
 """
 
-from itsdangerous import url_safe
-from itsdangerous import url_safe
-from itsdangerous import url_safe
-from itsdangerous import url_safe
-from itsdangerous import url_safe
-from werkzeug.datastructures import headers
-import requests
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
 from xml.etree import ElementTree as ET
 
 BIP_NS = {"b": "http://www.sap.com/rws/bip"}
+
+
+class _HTTPResponse:
+    def __init__(self, status_code: int, headers, content: bytes):
+        self.status_code = status_code
+        self.headers = headers
+        self.content = content
+        self.text = content.decode("utf-8", errors="replace")
+
+    def raise_for_status(self):
+        if self.status_code >= 400:
+            raise RuntimeError(f"HTTP request failed with status {self.status_code}.")
+
+
+def _request(method: str, url: str, *, data=None, headers=None, timeout=30):
+    request = Request(url, data=data, headers=headers or {}, method=method)
+    try:
+        with urlopen(request, timeout=timeout) as response:
+            return _HTTPResponse(response.status, response.headers, response.read())
+    except HTTPError as error:
+        return _HTTPResponse(error.code, error.headers, error.read())
 
 
 class BOBJSession:
@@ -50,7 +66,8 @@ class BOBJSession:
             "Accept": "application/xml",
         }
 
-        response = requests.post(
+        response = _request(
+            "POST",
             url,
             data=body.encode("utf-8"),
             headers=headers,
@@ -104,7 +121,8 @@ class BOBJSession:
 
             url = f"{self.base_url}/raylight/v1"
 
-            response = requests.get(
+            response = _request(
+                "GET",
                 url,
                 headers=self.headers(),
                 timeout=10,
@@ -120,7 +138,7 @@ class BOBJSession:
                     "Continuing in Crystal-only mode."
                 )
 
-        except requests.RequestException:
+        except (URLError, TimeoutError, OSError):
             print("Raylight service unavailable. Continuing in Crystal-only mode.")
 
     # ---------------------------------------------------------
@@ -132,13 +150,14 @@ class BOBJSession:
             return
 
         try:
-            requests.post(
+            _request(
+                "POST",
                 f"{self.base_url}/logoff",
                 headers=self.headers(),
                 timeout=10,
             )
 
-        except requests.RequestException:
+        except (URLError, TimeoutError, OSError):
             pass
 
         finally:
