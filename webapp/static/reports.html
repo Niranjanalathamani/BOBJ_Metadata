@@ -380,10 +380,12 @@
         .col-name { width: 14%; min-width: 130px; }
         .col-folder { width: 12%; min-width: 120px; }
         .col-complexity { width: 8%; min-width: 80px; }
+        .col-target { width: 11%; min-width: 125px; }
         .col-id { width: 6%; min-width: 60px; }
         .col-provider { width: 8%; min-width: 90px; }
         .col-dims { width: 10%; min-width: 90px; }
         .col-measures { width: 10%; min-width: 90px; }
+        .col-hierarchies { width: 10%; min-width: 100px; }
         .col-vars { width: 10%; min-width: 90px; }
         .col-formulas { width: 14%; min-width: 150px; }
         .col-filters { width: 10%; min-width: 100px; }
@@ -410,6 +412,27 @@
             color: #065F46 !important;
             border-color: #A7F3D0 !important;
             font-weight: bold;
+        }
+
+        .pill-target-stories {
+            background-color: #EEF2FF !important;
+            color: #4338CA !important;
+            border-color: #C7D2FE !important;
+            font-weight: 600;
+        }
+
+        .pill-target-excel {
+            background-color: #ECFDF5 !important;
+            color: #047857 !important;
+            border-color: #A7F3D0 !important;
+            font-weight: 600;
+        }
+
+        .pill-target-analyzer {
+            background-color: #FDF4FF !important;
+            color: #9333EA !important;
+            border-color: #F5D0FE !important;
+            font-weight: 600;
         }
 
         .report-table th {
@@ -491,6 +514,12 @@
             background: #FFF7ED;
             color: #C2410C;
             border-color: #FED7AA;
+        }
+
+        .pill-hierarchy {
+            background: #F0FDFA;
+            color: #0F766E;
+            border-color: #99F6E4;
         }
 
         .pill-more {
@@ -757,6 +786,64 @@
             }
         }
 
+        function getRecommendedTarget(r) {
+            if (r.recommended_target || r["Recommended Target"]) {
+                return r.recommended_target || r["Recommended Target"];
+            }
+
+            const kind = String(r.kind || "").toLowerCase();
+            if (kind.includes("dashboard") || kind.includes("crystal")) {
+                return "SAC Stories";
+            }
+
+            const vis = r.visualizations || r.Visualizations || {};
+            let totalCharts = 0;
+            let totalTables = 0;
+            if (typeof vis === "object" && vis !== null) {
+                for (const counts of Object.values(vis)) {
+                    if (typeof counts === "object" && counts !== null) {
+                        totalCharts += Number(counts.visualizations || 0);
+                        totalTables += Number(counts.tables || 0);
+                    }
+                }
+            }
+
+            const variables = r.variables || r.Variables || {};
+            const varCount = Array.isArray(variables) ? variables.length : Object.keys(variables).length;
+
+            const dims = r.dimensions || r.Dimensions || [];
+            const dimsCount = Array.isArray(dims) ? dims.length : 0;
+
+            // 1. SAC Stories: reports with visualizations and more than one chart (or charts present)
+            if (totalCharts > 1 || totalCharts >= 1) {
+                return "SAC Stories";
+            }
+
+            // 2. Excel add-on: reports with more calculated columns (> 5)
+            if (varCount > 5) {
+                return "Excel add-on";
+            }
+
+            // 3. SAC Analyzer: reports with dimensions and tables, no visualizations, and minimal calculations (<= 5)
+            if (totalCharts === 0 && (totalTables > 0 || dimsCount > 0) && varCount <= 5) {
+                return "SAC Analyzer";
+            }
+
+            return "SAC Analyzer";
+        }
+
+        function renderTargetPill(target) {
+            if (!target) return '<span style="color:var(--muted); font-size:12px;">—</span>';
+            const t = String(target).trim();
+            let pillClass = "pill-target-analyzer";
+            if (t.toLowerCase().includes("stories")) {
+                pillClass = "pill-target-stories";
+            } else if (t.toLowerCase().includes("excel")) {
+                pillClass = "pill-target-excel";
+            }
+            return `<span class="pill-tag ${pillClass}">${esc(t)}</span>`;
+        }
+
         function cleanHex(str) {
             if (!str) return "";
             return String(str).replace(/_x([0-9a-fA-F]{4})_/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
@@ -882,6 +969,10 @@
             const body = document.getElementById("modalBody");
             body.innerHTML = `
                 <div class="modal-section">
+                    <div class="modal-section-title">Recommended Migration Target</div>
+                    <div style="margin-top: 4px;">${renderTargetPill(r.recommended_target || r["Recommended Target"] || getRecommendedTarget(r))}</div>
+                </div>
+                <div class="modal-section">
                     <div class="modal-section-title">Folder Path</div>
                     <div style="font-size: 13.5px; font-weight: 500; color: var(--navy); word-break: break-all;">${esc(r.folder_path || "—")}</div>
                 </div>
@@ -896,6 +987,10 @@
                 <div class="modal-section">
                     <div class="modal-section-title">Measures (${measures.length})</div>
                     ${renderPills(measures, "pill-measure", 100)}
+                </div>
+                <div class="modal-section">
+                    <div class="modal-section-title">Hierarchies (${(r.hierarchies || r.Hierarchies || []).length})</div>
+                    ${renderPills(r.hierarchies || r.Hierarchies || [], "pill-hierarchy", 100)}
                 </div>
                 <div class="modal-section">
                     <div class="modal-section-title">Variables (${Object.keys(variables).length})</div>
@@ -967,7 +1062,9 @@
                     const name = cleanHex(r.name || r.Name || r["Report Name"] || "").toLowerCase();
                     const id = String(r.id || r.ID || r["Report ID"] || "").toLowerCase();
                     const folder = (r.folder_path || key).toLowerCase();
-                    return name.includes(q) || id.includes(q) || folder.includes(q);
+                    const hText = parseList(r.hierarchies || r.Hierarchies).join(" ").toLowerCase();
+                    const target = (r.recommended_target || r["Recommended Target"] || getRecommendedTarget(r)).toLowerCase();
+                    return name.includes(q) || id.includes(q) || folder.includes(q) || hText.includes(q) || target.includes(q);
                 });
 
                 if (filtered.length === 0) continue;
@@ -1007,10 +1104,12 @@
                                             <th class="col-name">Report Name</th>
                                             <th class="col-folder">Folder Path</th>
                                             <th class="col-complexity">Complexity</th>
+                                            <th class="col-target">Recommended Target</th>
                                             <th class="col-id">Report ID</th>
                                             <th class="col-provider">Data Provider</th>
                                             <th class="col-dims">Dimensions</th>
                                             <th class="col-measures">Measures</th>
+                                            <th class="col-hierarchies">Hierarchies</th>
                                             <th class="col-vars">Variables</th>
                                             <th class="col-formulas">Variable Definitions</th>
                                             <th class="col-filters">Filters</th>
@@ -1025,22 +1124,26 @@
                                             const rId = r.id || r.ID || r["Report ID"] || "—";
                                             const dims = r.dimensions || r.Dimensions || [];
                                             const measures = r.measures || r.Measures || [];
+                                            const hierarchies = r.hierarchies || r.Hierarchies || [];
                                             const filters = r.filters || r.Filters || [];
                                             const dataproviders = r.dataproviders || r.Dataproviders || [];
                                             const variables = r.variables || r.Variables || {};
                                             const varNames = Object.keys(variables);
                                             const varFormulas = Object.values(variables);
                                             const complexity = getComplexity(r);
+                                            const recTarget = r.recommended_target || r["Recommended Target"] || getRecommendedTarget(r);
 
                                             return `
                                                 <tr class="report-row">
                                                     <td class="report-name-cell col-name">${esc(rName)}</td>
                                                     <td class="col-folder" style="font-size:12.5px; color:var(--muted); word-break:break-all;">${esc(r.folder_path || key || "—")}</td>
                                                     <td class="col-complexity"><span class="pill-tag pill-${complexity.toLowerCase()}">${esc(complexity)}</span></td>
+                                                    <td class="col-target">${renderTargetPill(recTarget)}</td>
                                                     <td class="report-id-cell col-id">${esc(rId)}</td>
                                                     <td class="col-provider">${renderPills(dataproviders, "pill-tag", 2)}</td>
                                                     <td class="col-dims">${renderPills(dims, "pill-dim", 3)}</td>
                                                     <td class="col-measures">${renderPills(measures, "pill-measure", 3)}</td>
+                                                    <td class="col-hierarchies">${renderPills(hierarchies, "pill-hierarchy", 2)}</td>
                                                     <td class="col-vars">${renderPills(varNames, "pill-var", 3)}</td>
                                                     <td class="col-formulas">${renderFormulas(varFormulas)}</td>
                                                     <td class="col-filters">${renderPills(filters, "pill-filter", 3)}</td>
@@ -1160,10 +1263,12 @@
                             <th>Report Name</th>
                             <th>Folder Path</th>
                             <th>Complexity</th>
+                            <th>Recommended Target</th>
                             <th>Report ID</th>
                             <th>Data Provider</th>
                             <th>Dimensions</th>
                             <th>Measures</th>
+                            <th>Hierarchies</th>
                             <th>Variables</th>
                             <th>Variable Definitions</th>
                             <th>Filters</th>
@@ -1182,6 +1287,7 @@
                     const dataproviders = parseList(r.dataproviders || r.Dataproviders).join(", ");
                     const dims = parseList(r.dimensions || r.Dimensions).join(", ");
                     const measures = parseList(r.measures || r.Measures).join(", ");
+                    const hierarchies = parseList(r.hierarchies || r.Hierarchies).join(" | ");
                     const variables = r.variables || r.Variables || {};
                     const varNames = Object.keys(variables).join(", ");
                     const varFormulas = Object.values(variables).join(", ");
@@ -1189,6 +1295,7 @@
                     const visualizations = renderVisualizations(r.visualizations || r.Visualizations, true);
                     const sqlQueries = parseList(r.sql || r.SQL).join(" \n\n ");
                     const complexity = getComplexity(r);
+                    const recTarget = r.recommended_target || r["Recommended Target"] || getRecommendedTarget(r);
 
                     html += `
                         <tr>
@@ -1196,10 +1303,12 @@
                             <td class="report-name">${esc(name)}</td>
                             <td>${esc(r.folder_path || groupName || "—")}</td>
                             <td>${esc(complexity)}</td>
+                            <td>${esc(recTarget || "—")}</td>
                             <td>${esc(id)}</td>
                             <td>${esc(dataproviders || "—")}</td>
                             <td>${esc(dims || "—")}</td>
                             <td>${esc(measures || "—")}</td>
+                            <td>${esc(hierarchies || "—")}</td>
                             <td>${esc(varNames || "—")}</td>
                             <td>${esc(varFormulas || "—")}</td>
                             <td>${esc(filters || "—")}</td>

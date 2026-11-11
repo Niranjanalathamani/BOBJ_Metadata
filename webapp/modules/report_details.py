@@ -8,6 +8,7 @@ Evaluates WebI reports folder by folder with caching and multi-threaded Raylight
 from collections import defaultdict
 from modules import metadata
 from modules.path import build_folder_map, get_report_folder_path
+from modules.report_target import get_recommended_target
 from utils.infostore import run_paginated_cmsquery
 
 
@@ -57,19 +58,22 @@ def get_non_webi_reports_list(session, folder_map) -> list[dict]:
         group_name = _CMS_KIND_TO_GROUP.get(kind, kind)
         folder_path = get_report_folder_path(e, folder_map)
 
-        reports.append({
+        rep_dict = {
             "id": e.get("SI_ID"),
             "name": e.get("SI_NAME"),
             "kind": group_name,
             "folder_path": folder_path,
             "dimensions": [],
             "measures": [],
+            "hierarchies": [],
             "filters": [],
             "variables": {},
             "dataproviders": [],
             "visualizations": {},
             "sql": [],
-        })
+        }
+        rep_dict["recommended_target"] = get_recommended_target(rep_dict)
+        reports.append(rep_dict)
 
     return reports
 
@@ -118,6 +122,9 @@ def get_report_list(session, folder_path: str | None = None, force: bool = False
         # Sort folder names alphabetically, and reports inside each folder by name
         sorted_result = {}
         for f_path in sorted(result.keys()):
+            for rep in result[f_path]:
+                if not rep.get("recommended_target"):
+                    rep["recommended_target"] = get_recommended_target(rep)
             sorted_result[f_path] = sorted(result[f_path], key=lambda r: (r.get("name") or "").lower())
 
         return sorted_result
@@ -142,6 +149,13 @@ def get_report_list(session, folder_path: str | None = None, force: bool = False
         for k, v in grouped_non_webi.items():
             if k not in result:
                 result[k] = v
+
+        for group in result:
+            if group == "_collection_meta" or not isinstance(result[group], list):
+                continue
+            for rep in result[group]:
+                if not rep.get("recommended_target"):
+                    rep["recommended_target"] = get_recommended_target(rep)
 
         if collection_meta:
             result["_collection_meta"] = collection_meta

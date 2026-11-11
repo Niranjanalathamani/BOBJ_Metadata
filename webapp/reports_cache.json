@@ -11,6 +11,7 @@
         "Order _Count",
         "User_x005F_Count"
       ],
+      "hierarchies": [],
       "filters": [],
       "variables": {},
       "dataproviders": [
@@ -26,7 +27,8 @@
         "SELECT COUNT(Distinct(Table__3.\"code\")) FROM \"INCSPACE\".\"Order_View\" Table__3",
         "SELECT Count(Distinct(Table__1.\"uid\")) FROM \"INCSPACE\".\"User_View\" Table__1"
       ],
-      "collection_time_seconds": 1.24
+      "collection_time_seconds": 3.93,
+      "recommended_target": "SAC Stories"
     }
   ],
   "/BI Platform Auditing": [
@@ -47,6 +49,7 @@
         "p_x005F_Events _Started _Before"
       ],
       "measures": [],
+      "hierarchies": [],
       "filters": [],
       "variables": {},
       "dataproviders": [
@@ -63,7 +66,8 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 2.29
+      "collection_time_seconds": 4.68,
+      "recommended_target": "SAC Analyzer"
     },
     {
       "id": 45297,
@@ -85,6 +89,7 @@
         "p_x005F_Events _Started _Before"
       ],
       "measures": [],
+      "hierarchies": [],
       "filters": [],
       "variables": {},
       "dataproviders": [
@@ -101,7 +106,8 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 2.26
+      "collection_time_seconds": 4.89,
+      "recommended_target": "SAC Analyzer"
     },
     {
       "id": 45310,
@@ -120,6 +126,7 @@
         "p_x005F_Events _Started _Before"
       ],
       "measures": [],
+      "hierarchies": [],
       "filters": [],
       "variables": {},
       "dataproviders": [
@@ -136,7 +143,8 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 2.42
+      "collection_time_seconds": 4.8,
+      "recommended_target": "SAC Analyzer"
     },
     {
       "id": 45314,
@@ -166,6 +174,7 @@
         "Sessions _limit",
         "Users"
       ],
+      "hierarchies": [],
       "filters": [],
       "variables": {
         "Sessions limit": "=ToNumber(UserResponse(DataProvider([Day]);\"psView period when the number of sessions (of either named or concurrent users) exceeded X\"))"
@@ -184,7 +193,8 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 2.93
+      "collection_time_seconds": 5.13,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 45317,
@@ -205,6 +215,7 @@
       "measures": [
         "Sessions"
       ],
+      "hierarchies": [],
       "filters": [],
       "variables": {
         "Sessions": "=Max([Sessions per user])"
@@ -223,7 +234,8 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 2.5
+      "collection_time_seconds": 5.17,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 45313,
@@ -238,6 +250,7 @@
         "Event _ID",
         "Hour",
         "Month",
+        "Sessions _per _user",
         "Sessions _per _user_x002D_Dimension29",
         "Start _datetime",
         "Status _Description",
@@ -251,6 +264,7 @@
         "Events",
         "Users"
       ],
+      "hierarchies": [],
       "filters": [],
       "variables": {},
       "dataproviders": [
@@ -271,7 +285,8 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 3.04
+      "collection_time_seconds": 4.07,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 45293,
@@ -279,37 +294,13 @@
       "cuid": "AaOWyoXppd5AmQ.wVjtcbks",
       "kind": "Web Intelligence",
       "folder_path": "/BI Platform Auditing",
-      "dimensions": [
-        "Application _Type",
-        "Day",
-        "Error",
-        "Hour",
-        "Logon _Error",
-        "Month",
-        "Sessions _per _user_x002D_Dimension29",
-        "Start _datetime",
-        "Status _Description",
-        "User",
-        "Year",
-        "p_x005F_Events _Started _After",
-        "p_x005F_Events _Started _Before",
-        "p_x005F_View _logon _events _when _the _number _of _user _sessions _an _individual _reached _was _at _least _X",
-        "p_x005F_View _period _when _the _number _of _sessons _exceeded _X",
-        "p_x005F_View _periods _when _the _number _of _named _user _sessions _exceeded _X",
-        "p_x005F_View _periods _when _the _number _of _named _user _sessions _reached _at _least _X",
-        "p_x005F_View _periods _when _the _number _of _named _user _sessons _exceeded _X",
-        "p_x005F_View _periods _when _the _number _of _named _users _sessons _exceeded _X"
-      ],
-      "measures": [
-        "Peak __x0027_Duplicate_x0027_ __x0028_Concurrent_x0029_ _Sessions _within _a _single _user",
-        "Sessions __x0028_Concurrent _User_x0029_",
-        "Sessions __x0028_Named _User __x002B_ _Concurrent_x0029_",
-        "Sessions __x0028_Named _Users_x0029_"
-      ],
+      "dimensions": [],
+      "measures": [],
+      "hierarchies": [],
       "filters": [],
       "variables": {
         "Logon Error": "=[Error]",
-        "Peak 'Duplicate' (Concurrent) Sessions within a single user": "=Max([Sessions per user])"
+        "Peak 'Duplicate' (Concurrent) Sessions within a single user": "=Max([Sessions per user-Dimension29])"
       },
       "dataproviders": [
         "unx"
@@ -325,7 +316,8 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 3.02
+      "collection_time_seconds": 23.72,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 45319,
@@ -345,6 +337,7 @@
         "p_x005F_View _periods _when _the _number _of _named _users _sessons _exceeded _X"
       ],
       "measures": [],
+      "hierarchies": [],
       "filters": [],
       "variables": {},
       "dataproviders": [
@@ -361,7 +354,8 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 2.51
+      "collection_time_seconds": 3.06,
+      "recommended_target": "SAC Analyzer"
     },
     {
       "id": 45305,
@@ -377,6 +371,7 @@
         "Details",
         "Events"
       ],
+      "hierarchies": [],
       "filters": [],
       "variables": {},
       "dataproviders": [
@@ -393,7 +388,8 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 2.82
+      "collection_time_seconds": 3.6,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 45309,
@@ -418,8 +414,8 @@
         "Event _ID",
         "Event _Type",
         "Object",
-        "Object _CUID",
         "Object _Folder _Path",
+        "Object _ID",
         "Object _Type",
         "Server",
         "Session _ID",
@@ -435,9 +431,10 @@
         "p_x005F_Events _Started _Before"
       ],
       "measures": [],
+      "hierarchies": [],
       "filters": [],
       "variables": {
-        "Event Header": "=[TimeOrdered]+[Event ID]+[Start datetime]+[Application Type]+[Server]+[Cluster]+[Object Type]+[Object ID]+[Error]+[Action ID]+[Cluster]+[Datetime Recorded in Database]+[Error]+[Event Category]+[Event Type]+[Object]+[Object Folder Path]+[Session ID]+[Tenant]+[User]+[Top Level Folder]+[Status]+[Status Code]+[Status Description]",
+        "Event Header": "=[TimeOrdered]+[Event ID]+[Start datetime]+[Application Type]+[Server]+[Cluster]+[Object Type]+[Object CUID]+[Error]+[Action ID]+[Cluster]+[Datetime Recorded in Database]+[Error]+[Event Category]+[Event Type]+[Object]+[Object Folder Path]+[Session ID]+[Tenant]+[User]+[Top Level Folder]+[Status]+[Status Code]+[Status Description]",
         "TimeOrdered": "=Year([Start datetime])+\" \"+(If (MonthNumberOfYear([Start datetime])<10) Then (\"0\"+MonthNumberOfYear([Start datetime])) Else MonthNumberOfYear([Start datetime]) )+ \" \"+ (If (DayNumberOfMonth([Start datetime])<10) Then (\"0\"+DayNumberOfMonth([Start datetime])) Else DayNumberOfMonth([Start datetime]) )+ \" \"+(FormatDate([Start datetime];\"HHmmss\"))"
       },
       "dataproviders": [
@@ -454,7 +451,8 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 2.75
+      "collection_time_seconds": 3.75,
+      "recommended_target": "SAC Analyzer"
     },
     {
       "id": 45315,
@@ -480,6 +478,7 @@
         "Events",
         "Maximum _Delay _in _Recording _time __x0028_hr_x0029_"
       ],
+      "hierarchies": [],
       "filters": [],
       "variables": {
         "Average Delay (hr)": "=[Delay in Recording time (hr)]/[Events]"
@@ -522,7 +521,8 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 5.33
+      "collection_time_seconds": 10.8,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 45316,
@@ -559,6 +559,7 @@
         "Rows",
         "Rows __x002F_ _Hour"
       ],
+      "hierarchies": [],
       "filters": [],
       "variables": {
         "Average Document Size (M Bytes)": "=[Document Size (M Bytes)]/[Events]",
@@ -650,8 +651,8 @@
           "tables": 3
         },
         "TopLevelFolder over WeekDay": {
-          "visualizations": 5,
-          "tables": 3
+          "visualizations": 0,
+          "tables": 0
         },
         "TopLevelFolder over H": {
           "visualizations": 5,
@@ -707,7 +708,8 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 14.75
+      "collection_time_seconds": 42.53,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 45294,
@@ -745,6 +747,7 @@
         "Rows",
         "Rows __x002F_ _Hour"
       ],
+      "hierarchies": [],
       "filters": [],
       "variables": {
         "Average Document Size (M Bytes)": "=[Document Size (M Bytes)]/[Events]",
@@ -909,7 +912,8 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 16.34
+      "collection_time_seconds": 29.34,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 45304,
@@ -949,6 +953,7 @@
         "Rows",
         "Rows __x002F_ _Hour"
       ],
+      "hierarchies": [],
       "filters": [],
       "variables": {
         "Average Document Size (M Bytes)": "=[Document Size (M Bytes)]/[Events]",
@@ -1090,7 +1095,8 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 14.03
+      "collection_time_seconds": 26.05,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 45300,
@@ -1131,6 +1137,7 @@
         "Rows",
         "Rows __x002F_ _Hour"
       ],
+      "hierarchies": [],
       "filters": [],
       "variables": {
         "Average Document Size (M Bytes)": "=[Document Size (M Bytes)]/[Events]",
@@ -1288,7 +1295,8 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 16.15
+      "collection_time_seconds": 24.56,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 45298,
@@ -1328,6 +1336,7 @@
         "Rows",
         "Rows __x002F_ _Hour"
       ],
+      "hierarchies": [],
       "filters": [],
       "variables": {
         "Average Document Size (M Bytes)": "=[Document Size (M Bytes)]/[Events]",
@@ -1469,7 +1478,8 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 28.95
+      "collection_time_seconds": 22.64,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 45308,
@@ -1492,6 +1502,7 @@
         "p_x005F_Events _Started _Before"
       ],
       "measures": [],
+      "hierarchies": [],
       "filters": [],
       "variables": {
         "Status": "=If ([Object Type]=\"Server\") Then (\nIf ([Property]=\"DISABLED_TARGET\") Then (If [Property Value]=\"1\" Then [Object]+\" Disabled\" Else [Object]+\" Enabled\")\nElseIf ([Property]=\"EXPECTED_RUN_STATE\") Then (If [Property Value]=\"1\" Then [Object]+\" Started\" Else [Object]+\" Stopped\")\nElseIf ([Property]=\"AUTOBOOT\") Then ([Object]+\" Started on boot up\")\nElseIf ([Property]=\"REQUIRES_RESTART\") Then ([Object]+\" Modified and requires restarting\")\n)\nElse If ([Object Type]=\"Auditing Configuration\") Then (If ([Property]=\"AUDIT_DB_CONNECTION\") Then (\"Auditing Connection Updated\")\nElseIf ([Property]=\"DISABLED_AUDIT_EVENT_DETAILS\") Then (\"Auditing Events Disabled\")\nElseIf ([Property]=\"ENABLED_AUDIT_EVENTS\") Then (\"Auditing Events Enabled\")\nElseIf ([Property]=\"AUDIT_LEVEL\") Then (\" Auditing Level Changed to \"+[Property Value]))"
@@ -1522,7 +1533,8 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 1.99
+      "collection_time_seconds": 3.63,
+      "recommended_target": "SAC Analyzer"
     },
     {
       "id": 45318,
@@ -1559,6 +1571,7 @@
         "Sessions __x0028_Named _User __x002B_ _Concurrent_x0029_",
         "Sessions __x0028_Named _Users_x0029_"
       ],
+      "hierarchies": [],
       "filters": [],
       "variables": {
         "Actions / Session": "=[Actions]/[Sessions (Named User + Concurrent)]",
@@ -1635,7 +1648,8 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 7.13
+      "collection_time_seconds": 13.18,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 45296,
@@ -1673,6 +1687,7 @@
         "Sessions __x0028_Named _Users_x0029_",
         "Users"
       ],
+      "hierarchies": [],
       "filters": [],
       "variables": {
         "Actions / Session": "=[Actions]/[Sessions (Named User + Concurrent)]",
@@ -1749,7 +1764,8 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 6.46
+      "collection_time_seconds": 13.69,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 45299,
@@ -1776,6 +1792,7 @@
         "Data _Providers",
         "Events"
       ],
+      "hierarchies": [],
       "filters": [],
       "variables": {
         "Average Data Providers": "=[Data Providers]/[Events]",
@@ -1795,7 +1812,8 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 1.4
+      "collection_time_seconds": 3.32,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 45312,
@@ -1826,6 +1844,7 @@
         "Events",
         "Rows"
       ],
+      "hierarchies": [],
       "filters": [],
       "variables": {
         "Average Data Providers": "=[Data Providers]/[Events]",
@@ -1848,7 +1867,8 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 1.7
+      "collection_time_seconds": 4.3,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 45302,
@@ -1870,6 +1890,7 @@
       "measures": [
         "Events"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [Events] | Operator: LessOrEqual | Value: [10000]"
       ],
@@ -1894,7 +1915,8 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 1.82
+      "collection_time_seconds": 6.83,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 45311,
@@ -1920,6 +1942,7 @@
         "Actions",
         "Events"
       ],
+      "hierarchies": [],
       "filters": [],
       "variables": {},
       "dataproviders": [
@@ -1940,7 +1963,8 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 1.68
+      "collection_time_seconds": 6.76,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 45303,
@@ -1967,6 +1991,7 @@
       "measures": [
         "Events"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [Data Provider Object] | Operator: NotInList | Value: [[EMPTY_VALUE], [NULL_VALUE]]"
       ],
@@ -1997,7 +2022,8 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 1.95
+      "collection_time_seconds": 7.3,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 45307,
@@ -2024,6 +2050,7 @@
       "measures": [
         "Events"
       ],
+      "hierarchies": [],
       "filters": [],
       "variables": {},
       "dataproviders": [
@@ -2040,7 +2067,8 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 1.32
+      "collection_time_seconds": 6.51,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 45306,
@@ -2061,6 +2089,7 @@
         "Events",
         "Pages _Reads"
       ],
+      "hierarchies": [],
       "filters": [],
       "variables": {
         "Pages Reads": "=[Events]"
@@ -2091,10 +2120,39 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 2.01
+      "collection_time_seconds": 6.45,
+      "recommended_target": "SAC Stories"
     }
   ],
   "/TEST_BO": [
+    {
+      "id": 47826,
+      "name": "Complex Functionality check Report",
+      "cuid": "AX.ypsTJ0Y9NlXZ.uLPk0Eg",
+      "kind": "Web Intelligence",
+      "folder_path": "/TEST_BO",
+      "dimensions": [],
+      "measures": [],
+      "hierarchies": [
+        "Area: Country -> State -> City"
+      ],
+      "filters": [],
+      "variables": {},
+      "dataproviders": [
+        "unx"
+      ],
+      "visualizations": {
+        "Report 1": {
+          "visualizations": 0,
+          "tables": 3
+        }
+      },
+      "sql": [
+        "SELECT Table__1.\"Sales\", Table__1.\"Quantity\", Table__1.\"Product\", Table__1.\"Year\", Table__1.\"Country\", Table__1.\"State\", Table__1.\"City\" FROM \"INCSPACE01\".\"Drill_GV\" Table__1"
+      ],
+      "collection_time_seconds": 2.93,
+      "recommended_target": "SAC Analyzer"
+    },
     {
       "id": 16923,
       "name": "Customer Behaviour",
@@ -2115,6 +2173,7 @@
         "Total _Clicked",
         "Total_x005F_Carts"
       ],
+      "hierarchies": [],
       "filters": [],
       "variables": {
         "Campaign driven Percentage": "=Round(([Query 4].[Campaign Driven Count]/[Total_Carts])*100 ;0)",
@@ -2144,7 +2203,8 @@
         "SELECT Table__1.\"code\" FROM \"INCSPACE\".\"Prepurchase_1_GV\" Table__1 WHERE ( Table__1.\"code\" is not null )",
         "SELECT Table__1.\"uid\", Table__1.\"code\" FROM \"INCSPACE\".\"Prepurchase_1_GV\" Table__1"
       ],
-      "collection_time_seconds": 3.54
+      "collection_time_seconds": 4.41,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 17548,
@@ -2154,13 +2214,14 @@
       "folder_path": "/TEST_BO",
       "dimensions": [],
       "measures": [],
+      "hierarchies": [],
       "filters": [],
       "variables": {
         "Campaign driven Percentage": "=Round(([??DP4.DOf??]/[??DP3.DO2c??])*100 ;0)",
         "Cart Initiation Rate": "=Round(( [Distinct users] / [Total users] ) * 100 ; 0)",
         "Cart Modified Rate per Cart": "=[??DP6.DO2b??]/[??DP6.DO2a??]",
-        "Click Through Rate": "=Round([??DP2.DO26??] / [??DP2.DO23??] * 100 ;0)",
-        "Distinct users": "=Count(If(Not(IsNull([??DP0.DO1??]))) Then [??DP0.DOa??])",
+        "Click Through Rate": "",
+        "Distinct users": "",
         "Total users": "=Count([??DP0.DOa??])"
       },
       "dataproviders": [
@@ -2179,7 +2240,8 @@
       "sql": [
         "( SELECT 1 AS GID, Table__1.\"uid\", Table__1.\"Name_of_the_campaign\", max( Table__1.\"code\" ), Sum(Table__1.\"totalClicked\"), Sum(Table__1.\"Campaign_driven_count\"), Sum(Table__1.\"opened\"), Table__1.\"code\" FROM \"INCSPACE\".\"Prepurchase_1_GV\" Table__1 WHERE ( Table__1.\"code\" is not null ) GROUP BY Table__1.\"uid\", Table__1.\"Name_of_the_campaign\", Table__1.\"code\" UNION SELECT 0 AS GID, NULL, Table__1.\"Name_of_the_campaign\", NULL, NULL, Sum(Table__1.\"Campaign_driven_count\"), NULL, NULL FROM \"INCSPACE\".\"Prepurchase_1_GV\" Table__1 WHERE ( Table__1.\"code\" is not null ) GROUP BY Table__1.\"Name_of_the_campaign\" )"
       ],
-      "collection_time_seconds": 2.69
+      "collection_time_seconds": 37.67,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 6179,
@@ -2197,6 +2259,7 @@
         "C1",
         "Quantity"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [Nation] | Operator: InList | Value: [AUS, Canada, India]",
         "Key: [Query 1].[Product Category] | Operator: InList | Value: [Applications, Bikes, Computer, Home Theater]",
@@ -2223,7 +2286,8 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 3.33
+      "collection_time_seconds": 8.39,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 13030,
@@ -2240,6 +2304,7 @@
         "Amount",
         "Quantity"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [Nation] | Operator: InList | Value: [AUS, Canada, India]",
         "Key: [Product Category] | Operator: InList | Value: [Home Theater]"
@@ -2255,7 +2320,46 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 2.24
+      "collection_time_seconds": 7.07,
+      "recommended_target": "SAC Stories"
+    },
+    {
+      "id": 48106,
+      "name": "Drill_Report_city_filter",
+      "cuid": "AUGj2zmhfORKmUSbLELPOxY",
+      "kind": "Web Intelligence",
+      "folder_path": "/TEST_BO",
+      "dimensions": [
+        "City",
+        "Country",
+        "Product",
+        "State",
+        "Year",
+        "p_x005F_Enter _value_x0028_s_x0029_ _for _City"
+      ],
+      "measures": [
+        "Quantity",
+        "Sales"
+      ],
+      "hierarchies": [
+        "Area: Country -> State -> City"
+      ],
+      "filters": [],
+      "variables": {},
+      "dataproviders": [
+        "unx"
+      ],
+      "visualizations": {
+        "Report 1": {
+          "visualizations": 0,
+          "tables": 2
+        }
+      },
+      "sql": [
+        "SELECT Table__1.\"Sales\", Table__1.\"Quantity\", Table__1.\"Product\", Table__1.\"Year\", Table__1.\"Country\", Table__1.\"State\", Table__1.\"City\" FROM \"INCSPACE01\".\"Drill_GV\" Table__1 WHERE Table__1.\"City\" = 'Chennai'"
+      ],
+      "collection_time_seconds": 1.83,
+      "recommended_target": "SAC Analyzer"
     },
     {
       "id": 16017,
@@ -2265,12 +2369,14 @@
       "folder_path": "/TEST_BO",
       "dimensions": [],
       "measures": [],
+      "hierarchies": [],
       "filters": [],
       "variables": {},
       "dataproviders": [],
       "visualizations": {},
       "sql": [],
-      "collection_time_seconds": 2.26
+      "collection_time_seconds": 2.6,
+      "recommended_target": "SAC Analyzer"
     }
   ],
   "/TEST_BO/BOBJ to SAC": [
@@ -2299,6 +2405,7 @@
         "Revenue",
         "Units _Sold"
       ],
+      "hierarchies": [],
       "filters": [],
       "variables": {
         "Total Products": "=Count([Product Id])"
@@ -2309,13 +2416,14 @@
       "visualizations": {
         "Report 1": {
           "visualizations": 7,
-          "tables": 0
+          "tables": 1
         }
       },
       "sql": [
         "SELECT Table__1.\"Product_ID\", Table__1.\"Product_Name\", Table__1.\"Category\", Table__1.\"Sub_Category\", Table__1.\"Brand\", Table__1.\"Supplier\", Table__1.\"Warehouse\", Table__1.\"Region\", Table__1.\"Launch_Year\", Table__1.\"Product_Status\", Table__1.\"Units_Sold\", Table__1.\"Revenue\", Table__1.\"Return_Quantity\", Table__1.\"Gross_Profit\", Table__1.\"Average_Rating\" FROM \"INCSPACE\".\"Product_Performance_Realistic_GV\" Table__1"
       ],
-      "collection_time_seconds": 2.31
+      "collection_time_seconds": 2.69,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 41859,
@@ -2343,6 +2451,7 @@
         "Po _Amount",
         "Received _Quantity"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [Purchasing Organization] | Operator: InList | Value: [Corporate Procurement, Global Procurement, India Procurement, Retail Procurement]"
       ],
@@ -2363,7 +2472,8 @@
       "sql": [
         "SELECT Table__1.\"PO_Number\", Table__1.\"PO_Date\", Table__1.\"Vendor_ID\", Table__1.\"Vendor_Name\", Table__1.\"Buyer_Name\", Table__1.\"Material_Name\", Table__1.\"Material_Group\", Table__1.\"Plant\", Table__1.\"Purchasing_Organization\", Table__1.\"PO_Status\", Table__1.\"Ordered_Quantity\", Table__1.\"Received_Quantity\", Table__1.\"PO_Amount\", Table__1.\"Pending_Quantity\", Table__1.\"Invoice_Amount\" FROM \"INCSPACE\".\"Purchase_Orders_Realistic_GV\" Table__1 WHERE Table__1.\"Material_Group\" IN ('Networking','Monitors','Computers','Furniture','Accessories','Printers','Tablets')"
       ],
-      "collection_time_seconds": 2.52
+      "collection_time_seconds": 3.01,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 41995,
@@ -2390,6 +2500,7 @@
         "Sales _Amount _Usd",
         "Unit _Price _Usd"
       ],
+      "hierarchies": [],
       "filters": [],
       "variables": {},
       "dataproviders": [
@@ -2404,7 +2515,8 @@
       "sql": [
         "SELECT Table__1.\"Transaction_ID\", Table__1.\"Store_ID\", Table__1.\"Store_Name\", Table__1.\"City\", Table__1.\"Region\", Table__1.\"Product_Category\", Table__1.\"Product_Name\", Table__1.\"Salesperson\", Table__1.\"Payment_Method\", Table__1.\"Sales_Date\", Table__1.\"Quantity_Sold\", Table__1.\"Unit_Price_USD\", Table__1.\"Discount_Percent\", Table__1.\"Sales_Amount_USD\", Table__1.\"Profit_USD\" FROM \"INCSPACE\".\"Retail_Store_Sales_GV\" Table__1"
       ],
-      "collection_time_seconds": 1.83
+      "collection_time_seconds": 2.69,
+      "recommended_target": "SAC Analyzer"
     },
     {
       "id": 42247,
@@ -2431,6 +2543,7 @@
         "Sales _Amount",
         "Tax _Amount"
       ],
+      "hierarchies": [],
       "filters": [],
       "variables": {},
       "dataproviders": [
@@ -2445,7 +2558,8 @@
       "sql": [
         "SELECT Table__1.\"Order_Number\", Table__1.\"Order_Date\", Table__1.\"Customer_Name\", Table__1.\"Customer_Group\", Table__1.\"Sales_Organization\", Table__1.\"Region\", Table__1.\"Country\", Table__1.\"Product_Name\", Table__1.\"Product_Category\", Table__1.\"Quantity_Sold\", Table__1.\"Sales_Employee\", Table__1.\"Sales_Amount\", Table__1.\"Discount_Amount\", Table__1.\"Tax_Amount\", Table__1.\"Profit\" FROM \"INCSPACE\".\"Sales_Order_Realistic_GV\" Table__1"
       ],
-      "collection_time_seconds": 2.33
+      "collection_time_seconds": 2.85,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 43163,
@@ -2472,6 +2586,7 @@
         "Resolution _Time _Hours",
         "Service _Cost _Usd"
       ],
+      "hierarchies": [],
       "filters": [],
       "variables": {},
       "dataproviders": [
@@ -2486,10 +2601,90 @@
       "sql": [
         "SELECT Table__1.\"Request_ID\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Service_Type\", Table__1.\"Priority\", Table__1.\"Assigned_Team\", Table__1.\"Support_Agent\", Table__1.\"Region\", Table__1.\"Request_Status\", Table__1.\"Request_Date\", Table__1.\"Resolution_Time_Hours\", Table__1.\"Customer_Satisfaction\", Table__1.\"Escalation_Count\", Table__1.\"Service_Cost_USD\", Table__1.\"Resolution_SLA_Percent\" FROM \"INCSPACE\".\"Service_Requests_GV\" Table__1"
       ],
-      "collection_time_seconds": 2.33
+      "collection_time_seconds": 2.78,
+      "recommended_target": "SAC Stories"
     }
   ],
   "/TEST_BO/Validation_Input_Reports": [
+    {
+      "id": 47878,
+      "name": "All_Features_Report",
+      "cuid": "AUeT.iG2XF1Kgs.YNhG2w5k",
+      "kind": "Web Intelligence",
+      "folder_path": "/TEST_BO/Validation_Input_Reports",
+      "dimensions": [
+        "Category",
+        "City",
+        "Country",
+        "Deal_x005F_Stage",
+        "Month_x005F_Name",
+        "Order_x005F_Date",
+        "Order_x005F_ID",
+        "Product",
+        "Profit",
+        "Quarter",
+        "Region",
+        "Sales",
+        "Sales_x005F_Channel",
+        "Segment",
+        "State",
+        "Sub_x005F_Category"
+      ],
+      "measures": [
+        "Cost",
+        "Customer_x005F_Rating",
+        "Delivery_x005F_Days",
+        "Discount_x005F_Pct",
+        "Latitude",
+        "Longitude",
+        "Month_x005F_No",
+        "Profit",
+        "Profit_x005F_Margin_x005F_Pct",
+        "Quantity",
+        "Sales",
+        "Target_x005F_Sales",
+        "Year"
+      ],
+      "hierarchies": [],
+      "filters": [],
+      "variables": {},
+      "dataproviders": [
+        "text"
+      ],
+      "visualizations": {
+        "Overall_Data_Table": {
+          "visualizations": 0,
+          "tables": 1
+        },
+        "Comparison_Category": {
+          "visualizations": 5,
+          "tables": 0
+        },
+        "Comparison_Trend": {
+          "visualizations": 6,
+          "tables": 0
+        },
+        "Propositions": {
+          "visualizations": 9,
+          "tables": 0
+        },
+        "Distribution_Correlation": {
+          "visualizations": 9,
+          "tables": 0
+        },
+        "Geographic": {
+          "visualizations": 2,
+          "tables": 0
+        },
+        "Indicator_Tables": {
+          "visualizations": 5,
+          "tables": 3
+        }
+      },
+      "sql": [],
+      "collection_time_seconds": 6.05,
+      "recommended_target": "SAC Stories"
+    },
     {
       "id": 18268,
       "name": "Customer_Transactions",
@@ -2515,6 +2710,7 @@
         "Transaction_x005F_Amount",
         "Transaction_x005F_Count"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [City] | Operator: IsAny | Value: []",
         "Key: [Customer_Type] | Operator: IsAny | Value: []",
@@ -2536,7 +2732,8 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 2.71
+      "collection_time_seconds": 2.87,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 18253,
@@ -2563,6 +2760,7 @@
         "Delivery_x005F_Time_x005F_Hours",
         "Distance_x005F_KM"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [City] | Operator: IsAny | Value: []",
         "Key: [Delivery_Status] | Operator: IsAny | Value: []",
@@ -2583,7 +2781,8 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 2.29
+      "collection_time_seconds": 2.93,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 18202,
@@ -2610,6 +2809,7 @@
         "Sales",
         "Tax"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [Channel] | Operator: IsAny | Value: []",
         "Key: [Customer] | Operator: IsAny | Value: []"
@@ -2629,7 +2829,8 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 2.4
+      "collection_time_seconds": 3.0,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 18256,
@@ -2656,6 +2857,7 @@
         "Sales_x005F_Achieved_x005F_USD",
         "Training_x005F_Hours"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [Department] | Operator: IsAny | Value: []",
         "Key: [Job_Title] | Operator: IsAny | Value: []",
@@ -2676,7 +2878,8 @@
         }
       },
       "sql": [],
-      "collection_time_seconds": 2.6
+      "collection_time_seconds": 2.84,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 41246,
@@ -2690,7 +2893,6 @@
         "Employee _Name",
         "Employment _Type",
         "Gender",
-        "Hire _Date",
         "Job _Title",
         "Location",
         "Manager",
@@ -2705,6 +2907,7 @@
         "Sales _Achieved _Usd",
         "Training _Hours"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [Job Title] | Operator: IsAny | Value: []",
         "Key: [Manager] | Operator: IsAny | Value: []"
@@ -2724,9 +2927,10 @@
         }
       },
       "sql": [
-        "SELECT Table__1.\"Employee_ID\", Table__1.\"Employee_Name\", Table__1.\"Department\", Table__1.\"Job_Title\", Table__1.\"Manager\", Table__1.\"Location\", Table__1.\"Employment_Type\", Table__1.\"Gender\", Table__1.\"Hire_Date\", Table__1.\"Performance_Year\", Table__1.\"Projects_Completed\", Table__1.\"Performance_Score\", Table__1.\"Training_Hours\", Table__1.\"Attendance_Percent\", Table__1.\"Sales_Achieved_USD\" FROM \"INCSPACE\".\"Employee_Performance_GV\" Table__1 WHERE ( Table__1.\"Location\" IN ('Bengaluru','Chennai','Coimbatore','Mumbai','Pune') AND Table__1.\"Department\" IN ('Customer Support','Finance','Human Resources','Marketing','IT','Operations','Procurement','Sales') )"
+        "SELECT Table__1.\"Employee_ID\", Table__1.\"Employee_Name\", Table__1.\"Department\", Table__1.\"Job_Title\", Table__1.\"Manager\", Table__1.\"Location\", Table__1.\"Employment_Type\", Table__1.\"Gender\", Table__1.\"Performance_Year\", Table__1.\"Projects_Completed\", Table__1.\"Performance_Score\", Table__1.\"Training_Hours\", Table__1.\"Attendance_Percent\", Table__1.\"Sales_Achieved_USD\" FROM \"INCSPACE\".\"Employee_Performance_GV\" Table__1 WHERE ( Table__1.\"Location\" IN ('Bengaluru','Chennai','Coimbatore','Mumbai','Pune') AND Table__1.\"Department\" IN ('Customer Support','Finance','Human Resources','Marketing','IT','Operations','Procurement','Sales') )"
       ],
-      "collection_time_seconds": 2.78
+      "collection_time_seconds": 2.61,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 41249,
@@ -2743,7 +2947,6 @@
         "Document _Number",
         "Fiscal _Period",
         "Gl _Account",
-        "Posting _Date",
         "p_x005F_Enter _value_x0028_s_x0029_ _for _Department"
       ],
       "measures": [
@@ -2754,6 +2957,7 @@
         "Net _Balance",
         "Variance"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [Currency] | Operator: IsAny | Value: []",
         "Key: [Gl Account] | Operator: IsAny | Value: []"
@@ -2773,9 +2977,10 @@
         }
       },
       "sql": [
-        "SELECT Table__1.\"Document_Number\", Table__1.\"Posting_Date\", Table__1.\"Company_Code\", Table__1.\"Cost_Center\", Table__1.\"GL_Account\", Table__1.\"Fiscal_Year\", Table__1.\"Fiscal_Period\", Table__1.\"Currency\", Table__1.\"Department\", Table__1.\"Business_Unit\", Table__1.\"Debit_Amount\", Table__1.\"Credit_Amount\", Table__1.\"Net_Balance\", Table__1.\"Budget_Amount\", Table__1.\"Variance\" FROM \"INCSPACE\".\"Finance_Transactions_Realistic_GV\" Table__1 WHERE Table__1.\"Department\" IN ('Admin','Finance','HR','IT','Legal','Marketing','Procurement','Operations','Support','Sales')"
+        "SELECT Table__1.\"Document_Number\", Table__1.\"Company_Code\", Table__1.\"Cost_Center\", Table__1.\"GL_Account\", Table__1.\"Fiscal_Year\", Table__1.\"Fiscal_Period\", Table__1.\"Currency\", Table__1.\"Department\", Table__1.\"Business_Unit\", Table__1.\"Debit_Amount\", Table__1.\"Credit_Amount\", Table__1.\"Net_Balance\", Table__1.\"Budget_Amount\", Table__1.\"Variance\" FROM \"INCSPACE\".\"Finance_Transactions_Realistic_GV\" Table__1 WHERE Table__1.\"Department\" IN ('Admin','Finance','HR','IT','Legal','Marketing','Procurement','Operations','Support','Sales')"
       ],
-      "collection_time_seconds": 2.27
+      "collection_time_seconds": 3.24,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 41253,
@@ -2785,7 +2990,6 @@
       "folder_path": "/TEST_BO/Validation_Input_Reports",
       "dimensions": [
         "Batch _Number",
-        "Inventory _Date",
         "Material _Group",
         "Material _Name",
         "Material _Number",
@@ -2803,6 +3007,7 @@
         "Received _Quantity",
         "Stock _Value"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [Plant] | Operator: IsAny | Value: []",
         "Key: [Storage Location] | Operator: IsAny | Value: []"
@@ -2822,9 +3027,10 @@
         }
       },
       "sql": [
-        "SELECT Table__1.\"Material_Number\", Table__1.\"Material_Name\", Table__1.\"Plant\", Table__1.\"Storage_Location\", Table__1.\"Warehouse\", Table__1.\"Batch_Number\", Table__1.\"Supplier\", Table__1.\"Material_Group\", Table__1.\"Stock_Type\", Table__1.\"Inventory_Date\", Table__1.\"Opening_Stock\", Table__1.\"Received_Quantity\", Table__1.\"Issued_Quantity\", Table__1.\"Closing_Stock\", Table__1.\"Stock_Value\" FROM \"INCSPACE\".\"Inventory_Stock_Realistic_GV\" Table__1 WHERE Table__1.\"Supplier\" IN ('Apple India','Canon India','Cisco India','Dell India','Godrej Interio','IKEA India','HP India','Lenovo India','Logitech India','Samsung India')"
+        "SELECT Table__1.\"Material_Number\", Table__1.\"Material_Name\", Table__1.\"Plant\", Table__1.\"Storage_Location\", Table__1.\"Warehouse\", Table__1.\"Batch_Number\", Table__1.\"Supplier\", Table__1.\"Material_Group\", Table__1.\"Stock_Type\", Table__1.\"Opening_Stock\", Table__1.\"Received_Quantity\", Table__1.\"Issued_Quantity\", Table__1.\"Closing_Stock\", Table__1.\"Stock_Value\" FROM \"INCSPACE\".\"Inventory_Stock_Realistic_GV\" Table__1 WHERE Table__1.\"Supplier\" IN ('Apple India','Canon India','Cisco India','Dell India','Godrej Interio','IKEA India','HP India','Lenovo India','Logitech India','Samsung India')"
       ],
-      "collection_time_seconds": 2.15
+      "collection_time_seconds": 3.14,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 41546,
@@ -2852,8 +3058,9 @@
         "Revenue",
         "Units _Sold"
       ],
+      "hierarchies": [],
       "filters": [
-        "Key: [Category] | Operator: InList | Value: [Furniture, Networking]",
+        "Key: [Category] | Operator: IsAny | Value: []",
         "Key: [Supplier] | Operator: IsAny | Value: []"
       ],
       "variables": {},
@@ -2873,7 +3080,8 @@
       "sql": [
         "SELECT Table__1.\"Product_ID\", Table__1.\"Product_Name\", Table__1.\"Category\", Table__1.\"Sub_Category\", Table__1.\"Brand\", Table__1.\"Supplier\", Table__1.\"Warehouse\", Table__1.\"Region\", Table__1.\"Launch_Year\", Table__1.\"Product_Status\", Table__1.\"Units_Sold\", Table__1.\"Revenue\", Table__1.\"Return_Quantity\", Table__1.\"Gross_Profit\", Table__1.\"Average_Rating\" FROM \"INCSPACE\".\"Product_Performance_Realistic_GV\" Table__1 WHERE Table__1.\"Region\" IN ('North','South','West')"
       ],
-      "collection_time_seconds": 1.98
+      "collection_time_seconds": 3.09,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 41559,
@@ -2886,7 +3094,6 @@
         "Material _Group",
         "Material _Name",
         "Plant",
-        "Po _Date",
         "Po _Number",
         "Po _Status",
         "Purchasing _Organization",
@@ -2901,6 +3108,7 @@
         "Po _Amount",
         "Received _Quantity"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [Purchasing Organization] | Operator: IsAny | Value: []"
       ],
@@ -2919,9 +3127,10 @@
         }
       },
       "sql": [
-        "SELECT Table__1.\"PO_Number\", Table__1.\"PO_Date\", Table__1.\"Vendor_ID\", Table__1.\"Vendor_Name\", Table__1.\"Buyer_Name\", Table__1.\"Material_Name\", Table__1.\"Material_Group\", Table__1.\"Plant\", Table__1.\"Purchasing_Organization\", Table__1.\"PO_Status\", Table__1.\"Ordered_Quantity\", Table__1.\"Received_Quantity\", Table__1.\"PO_Amount\", Table__1.\"Pending_Quantity\", Table__1.\"Invoice_Amount\" FROM \"INCSPACE\".\"Purchase_Orders_Realistic_GV\" Table__1 WHERE Table__1.\"Plant\" IN ('Bangalore Plant','Chennai Plant','Delhi Plant','Mumbai Plant','Hyderabad Plant','Pune Plant')"
+        "SELECT Table__1.\"PO_Number\", Table__1.\"Vendor_ID\", Table__1.\"Vendor_Name\", Table__1.\"Buyer_Name\", Table__1.\"Material_Name\", Table__1.\"Material_Group\", Table__1.\"Plant\", Table__1.\"Purchasing_Organization\", Table__1.\"PO_Status\", Table__1.\"Ordered_Quantity\", Table__1.\"Received_Quantity\", Table__1.\"PO_Amount\", Table__1.\"Pending_Quantity\", Table__1.\"Invoice_Amount\" FROM \"INCSPACE\".\"Purchase_Orders_Realistic_GV\" Table__1 WHERE Table__1.\"Plant\" IN ('Bangalore Plant','Chennai Plant','Delhi Plant','Mumbai Plant','Hyderabad Plant','Pune Plant')"
       ],
-      "collection_time_seconds": 2.05
+      "collection_time_seconds": 2.35,
+      "recommended_target": "SAC Stories"
     }
   ],
   "/TEST_BO/Validation_Input_Reports/Combination_Input_Validation": [
@@ -2940,10 +3149,7 @@
         "Membership _Level",
         "Payment _Method",
         "State",
-        "Transaction _Date",
-        "Transaction _Id",
-        "p_x005F_Enter _value_x0028_s_x0029_ _for _Country",
-        "p_x005F_Enter _value_x0028_s_x0029_ _for _Payment _Method"
+        "Transaction _Id"
       ],
       "measures": [
         "Cashback",
@@ -2952,6 +3158,7 @@
         "Transaction _Amount",
         "Transaction _Count"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [Customer Type] | Operator: IsAny | Value: []"
       ],
@@ -2970,9 +3177,10 @@
         }
       },
       "sql": [
-        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Transaction_Date\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1"
+        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1"
       ],
-      "collection_time_seconds": 3.53
+      "collection_time_seconds": 4.69,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 19849,
@@ -2989,10 +3197,7 @@
         "Membership _Level",
         "Payment _Method",
         "State",
-        "Transaction _Date",
-        "Transaction _Id",
-        "p_x005F_Enter _value_x0028_s_x0029_ _for _Country",
-        "p_x005F_Enter _value_x0028_s_x0029_ _for _Payment _Method"
+        "Transaction _Id"
       ],
       "measures": [
         "Cashback",
@@ -3001,6 +3206,7 @@
         "Transaction _Amount",
         "Transaction _Count"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [Customer Type] | Operator: IsAny | Value: []",
         "Key: [State] | Operator: IsAny | Value: []"
@@ -3020,9 +3226,10 @@
         }
       },
       "sql": [
-        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Transaction_Date\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1"
+        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1"
       ],
-      "collection_time_seconds": 3.24
+      "collection_time_seconds": 3.59,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 19847,
@@ -3039,10 +3246,7 @@
         "Membership _Level",
         "Payment _Method",
         "State",
-        "Transaction _Date",
-        "Transaction _Id",
-        "p_x005F_Enter _value_x0028_s_x0029_ _for _Country",
-        "p_x005F_Enter _value_x0028_s_x0029_ _for _Payment _Method"
+        "Transaction _Id"
       ],
       "measures": [
         "Cashback",
@@ -3051,6 +3255,7 @@
         "Transaction _Amount",
         "Transaction _Count"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [City] | Operator: IsAny | Value: []",
         "Key: [Customer Type] | Operator: IsAny | Value: []",
@@ -3071,9 +3276,10 @@
         }
       },
       "sql": [
-        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Transaction_Date\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1"
+        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1"
       ],
-      "collection_time_seconds": 3.24
+      "collection_time_seconds": 3.66,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 19845,
@@ -3090,10 +3296,7 @@
         "Membership _Level",
         "Payment _Method",
         "State",
-        "Transaction _Date",
-        "Transaction _Id",
-        "p_x005F_Enter _value_x0028_s_x0029_ _for _Country",
-        "p_x005F_Enter _value_x0028_s_x0029_ _for _Payment _Method"
+        "Transaction _Id"
       ],
       "measures": [
         "Cashback",
@@ -3102,6 +3305,7 @@
         "Transaction _Amount",
         "Transaction _Count"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [City] | Operator: IsAny | Value: []",
         "Key: [Customer Type] | Operator: IsAny | Value: []",
@@ -3123,9 +3327,10 @@
         }
       },
       "sql": [
-        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Transaction_Date\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1"
+        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1"
       ],
-      "collection_time_seconds": 3.58
+      "collection_time_seconds": 4.68,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 19875,
@@ -3142,10 +3347,7 @@
         "Membership _Level",
         "Payment _Method",
         "State",
-        "Transaction _Date",
-        "Transaction _Id",
-        "p_x005F_Enter _value_x0028_s_x0029_ _for _Country",
-        "p_x005F_Enter _value_x0028_s_x0029_ _for _Payment _Method"
+        "Transaction _Id"
       ],
       "measures": [
         "Cashback",
@@ -3154,6 +3356,7 @@
         "Transaction _Amount",
         "Transaction _Count"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [Customer Type] | Operator: IsAny | Value: []"
       ],
@@ -3172,9 +3375,10 @@
         }
       },
       "sql": [
-        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Transaction_Date\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1"
+        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1"
       ],
-      "collection_time_seconds": 3.55
+      "collection_time_seconds": 3.74,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 21131,
@@ -3191,10 +3395,7 @@
         "Membership _Level",
         "Payment _Method",
         "State",
-        "Transaction _Date",
-        "Transaction _Id",
-        "p_x005F_Enter _value_x0028_s_x0029_ _for _Country",
-        "p_x005F_Enter _value_x0028_s_x0029_ _for _Payment _Method"
+        "Transaction _Id"
       ],
       "measures": [
         "Cashback",
@@ -3203,6 +3404,7 @@
         "Transaction _Amount",
         "Transaction _Count"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [City] | Operator: IsAny | Value: []",
         "Key: [Customer Type] | Operator: IsAny | Value: []",
@@ -3224,9 +3426,10 @@
         }
       },
       "sql": [
-        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Transaction_Date\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1"
+        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1"
       ],
-      "collection_time_seconds": 2.76
+      "collection_time_seconds": 3.67,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 19360,
@@ -3243,10 +3446,7 @@
         "Membership _Level",
         "Payment _Method",
         "State",
-        "Transaction _Date",
-        "Transaction _Id",
-        "p_x005F_Enter _value_x0028_s_x0029_ _for _Country",
-        "p_x005F_Enter _value_x0028_s_x0029_ _for _Payment _Method"
+        "Transaction _Id"
       ],
       "measures": [
         "Cashback",
@@ -3255,6 +3455,7 @@
         "Transaction _Amount",
         "Transaction _Count"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [City] | Operator: IsAny | Value: []",
         "Key: [Customer Type] | Operator: IsAny | Value: []",
@@ -3276,9 +3477,10 @@
         }
       },
       "sql": [
-        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Transaction_Date\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1"
+        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1"
       ],
-      "collection_time_seconds": 2.68
+      "collection_time_seconds": 2.69,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 19363,
@@ -3295,11 +3497,8 @@
         "Membership _Level",
         "Payment _Method",
         "State",
-        "Transaction _Date",
         "Transaction _Id",
-        "p_x005F_Enter _value_x0028_s_x0029_ _for _Country",
-        "p_x005F_Enter _value_x0028_s_x0029_ _for _Customer _Name",
-        "p_x005F_Enter _value_x0028_s_x0029_ _for _Payment _Method"
+        "p_x005F_Enter _value_x0028_s_x0029_ _for _Customer _Name"
       ],
       "measures": [
         "Cashback",
@@ -3308,6 +3507,7 @@
         "Transaction _Amount",
         "Transaction _Count"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [City] | Operator: IsAny | Value: []",
         "Key: [Customer Type] | Operator: IsAny | Value: []",
@@ -3329,9 +3529,10 @@
         }
       },
       "sql": [
-        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Transaction_Date\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1 WHERE Table__1.\"Customer_Name\" IN ('ABC Technologies','Capgemini','Accenture','Cognizant','Infosys Ltd','Reliance Retail','HCL Technologies','TCS','Tech Mahindra')"
+        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1 WHERE Table__1.\"Customer_Name\" IN ('ABC Technologies','Capgemini','Accenture','Cognizant','Infosys Ltd','Reliance Retail','HCL Technologies','TCS','Tech Mahindra')"
       ],
-      "collection_time_seconds": 2.73
+      "collection_time_seconds": 4.95,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 19366,
@@ -3348,9 +3549,7 @@
         "Membership _Level",
         "Payment _Method",
         "State",
-        "Transaction _Date",
         "Transaction _Id",
-        "p_x005F_Enter _value_x0028_s_x0029_ _for _Country",
         "p_x005F_Enter _value_x0028_s_x0029_ _for _Customer _Name",
         "p_x005F_Enter _value_x0028_s_x0029_ _for _Payment _Method"
       ],
@@ -3361,6 +3560,7 @@
         "Transaction _Amount",
         "Transaction _Count"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [City] | Operator: IsAny | Value: []",
         "Key: [Customer Type] | Operator: IsAny | Value: []",
@@ -3382,9 +3582,10 @@
         }
       },
       "sql": [
-        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Transaction_Date\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1 WHERE ( Table__1.\"Payment_Method\" IN ('Cash','Bank Transfer','Cheque','Credit Card','Debit Card','NEFT') AND Table__1.\"Customer_Name\" IN ('Accenture','ABC Technologies','Capgemini','Cognizant','HCL Technologies','Infosys Ltd','TCS','Wipro') )"
+        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1 WHERE ( Table__1.\"Payment_Method\" IN ('Cash','Bank Transfer','Cheque','Credit Card','Debit Card','NEFT') AND Table__1.\"Customer_Name\" IN ('Accenture','ABC Technologies','Capgemini','Cognizant','HCL Technologies','Infosys Ltd','TCS','Wipro') )"
       ],
-      "collection_time_seconds": 3.01
+      "collection_time_seconds": 2.57,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 19370,
@@ -3401,9 +3602,7 @@
         "Membership _Level",
         "Payment _Method",
         "State",
-        "Transaction _Date",
         "Transaction _Id",
-        "p_x005F_Enter _value_x0028_s_x0029_ _for _Country",
         "p_x005F_Enter _value_x0028_s_x0029_ _for _Customer _Name",
         "p_x005F_Enter _value_x0028_s_x0029_ _for _Membership _Level",
         "p_x005F_Enter _value_x0028_s_x0029_ _for _Payment _Method"
@@ -3415,6 +3614,7 @@
         "Transaction _Amount",
         "Transaction _Count"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [City] | Operator: IsAny | Value: []",
         "Key: [Customer Type] | Operator: IsAny | Value: []",
@@ -3435,9 +3635,10 @@
         }
       },
       "sql": [
-        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Transaction_Date\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1 WHERE ( Table__1.\"Payment_Method\" IN ('Cash','Bank Transfer','Cheque','Credit Card','Debit Card','NEFT') AND Table__1.\"Membership_Level\" IN ('Bronze','Gold') AND Table__1.\"Customer_Name\" IN ('Accenture','ABC Technologies','Capgemini','Cognizant','HCL Technologies','Infosys Ltd','TCS','Wipro') )"
+        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1 WHERE ( Table__1.\"Payment_Method\" IN ('Cash','Bank Transfer','Cheque','Credit Card','Debit Card','NEFT') AND Table__1.\"Membership_Level\" IN ('Bronze','Gold') AND Table__1.\"Customer_Name\" IN ('Accenture','ABC Technologies','Capgemini','Cognizant','HCL Technologies','Infosys Ltd','TCS','Wipro') )"
       ],
-      "collection_time_seconds": 3.0
+      "collection_time_seconds": 3.92,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 19373,
@@ -3454,9 +3655,7 @@
         "Membership _Level",
         "Payment _Method",
         "State",
-        "Transaction _Date",
         "Transaction _Id",
-        "p_x005F_Enter _value_x0028_s_x0029_ _for _Country",
         "p_x005F_Enter _value_x0028_s_x0029_ _for _Customer _Name",
         "p_x005F_Enter _value_x0028_s_x0029_ _for _Membership _Level",
         "p_x005F_Enter _value_x0028_s_x0029_ _for _Payment _Method",
@@ -3469,6 +3668,7 @@
         "Transaction _Amount",
         "Transaction _Count"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [City] | Operator: IsAny | Value: []",
         "Key: [Customer Type] | Operator: IsAny | Value: []",
@@ -3489,9 +3689,10 @@
         }
       },
       "sql": [
-        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Transaction_Date\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1 WHERE ( Table__1.\"Payment_Method\" IN ('Cash','Bank Transfer','Cheque','Credit Card','Debit Card','NEFT') AND Table__1.\"Membership_Level\" IN ('Bronze','Gold') AND Table__1.\"Transaction_ID\" IN ('TRX100001','TRX100002','TRX100003','TRX100004') AND Table__1.\"Customer_Name\" IN ('Accenture','ABC Technologies','Capgemini','Cognizant','HCL Technologies','Infosys Ltd','TCS','Wipro') )"
+        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1 WHERE ( Table__1.\"Payment_Method\" IN ('Cash','Bank Transfer','Cheque','Credit Card','Debit Card','NEFT') AND Table__1.\"Membership_Level\" IN ('Bronze','Gold') AND Table__1.\"Transaction_ID\" IN ('TRX100001','TRX100002','TRX100003','TRX100004') AND Table__1.\"Customer_Name\" IN ('Accenture','ABC Technologies','Capgemini','Cognizant','HCL Technologies','Infosys Ltd','TCS','Wipro') )"
       ],
-      "collection_time_seconds": 2.75
+      "collection_time_seconds": 2.99,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 20116,
@@ -3508,9 +3709,7 @@
         "Membership _Level",
         "Payment _Method",
         "State",
-        "Transaction _Date",
         "Transaction _Id",
-        "p_x005F_Enter _value_x0028_s_x0029_ _for _Country",
         "p_x005F_Enter _value_x0028_s_x0029_ _for _Customer _Name",
         "p_x005F_Enter _value_x0028_s_x0029_ _for _Payment _Method"
       ],
@@ -3521,6 +3720,7 @@
         "Transaction _Amount",
         "Transaction _Count"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [City] | Operator: IsAny | Value: []",
         "Key: [Customer Type] | Operator: IsAny | Value: []",
@@ -3542,9 +3742,10 @@
         }
       },
       "sql": [
-        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Transaction_Date\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1 WHERE ( Table__1.\"Payment_Method\" IN ('Cash','Bank Transfer','Cheque','Credit Card','Debit Card','NEFT') AND Table__1.\"Customer_Name\" IN ('Accenture','ABC Technologies','Capgemini','Cognizant','HCL Technologies','Infosys Ltd','TCS','Wipro') )"
+        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1 WHERE ( Table__1.\"Payment_Method\" IN ('Cash','Bank Transfer','Cheque','Credit Card','Debit Card','NEFT') AND Table__1.\"Customer_Name\" IN ('Accenture','ABC Technologies','Capgemini','Cognizant','HCL Technologies','Infosys Ltd','TCS','Wipro') )"
       ],
-      "collection_time_seconds": 2.32
+      "collection_time_seconds": 2.45,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 19879,
@@ -3561,9 +3762,7 @@
         "Membership _Level",
         "Payment _Method",
         "State",
-        "Transaction _Date",
         "Transaction _Id",
-        "p_x005F_Enter _value_x0028_s_x0029_ _for _Country",
         "p_x005F_Enter _value_x0028_s_x0029_ _for _Customer _Name",
         "p_x005F_Enter _value_x0028_s_x0029_ _for _Payment _Method"
       ],
@@ -3574,6 +3773,7 @@
         "Transaction _Amount",
         "Transaction _Count"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [City] | Operator: IsAny | Value: []",
         "Key: [Customer Type] | Operator: IsAny | Value: []",
@@ -3595,9 +3795,10 @@
         }
       },
       "sql": [
-        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Transaction_Date\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1 WHERE ( Table__1.\"Payment_Method\" IN ('Cash','Bank Transfer','Cheque','Credit Card','Debit Card','NEFT','Net Banking') AND Table__1.\"Customer_Name\" IN ('Accenture','ABC Technologies','Capgemini','Cognizant','HCL Technologies','Infosys Ltd','TCS','Wipro') )"
+        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1 WHERE ( Table__1.\"Payment_Method\" IN ('Cash','Bank Transfer','Cheque','Credit Card','Debit Card','NEFT','Net Banking') AND Table__1.\"Customer_Name\" IN ('Accenture','ABC Technologies','Capgemini','Cognizant','HCL Technologies','Infosys Ltd','TCS','Wipro') )"
       ],
-      "collection_time_seconds": 2.44
+      "collection_time_seconds": 2.61,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 19336,
@@ -3614,10 +3815,7 @@
         "Membership _Level",
         "Payment _Method",
         "State",
-        "Transaction _Date",
-        "Transaction _Id",
-        "p_x005F_Enter _value_x0028_s_x0029_ _for _Country",
-        "p_x005F_Enter _value_x0028_s_x0029_ _for _Payment _Method"
+        "Transaction _Id"
       ],
       "measures": [
         "Cashback",
@@ -3626,6 +3824,7 @@
         "Transaction _Amount",
         "Transaction _Count"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [City] | Operator: IsAny | Value: []",
         "Key: [Customer Type] | Operator: IsAny | Value: []",
@@ -3647,9 +3846,10 @@
         }
       },
       "sql": [
-        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Transaction_Date\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1"
+        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1"
       ],
-      "collection_time_seconds": 2.74
+      "collection_time_seconds": 2.46,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 19302,
@@ -3666,11 +3866,8 @@
         "Membership _Level",
         "Payment _Method",
         "State",
-        "Transaction _Date",
         "Transaction _Id",
-        "p_x005F_Enter _value_x0028_s_x0029_ _for _Country",
-        "p_x005F_Enter _value_x0028_s_x0029_ _for _Customer _Name",
-        "p_x005F_Enter _value_x0028_s_x0029_ _for _Payment _Method"
+        "p_x005F_Enter _value_x0028_s_x0029_ _for _Customer _Name"
       ],
       "measures": [
         "Cashback",
@@ -3679,6 +3876,7 @@
         "Transaction _Amount",
         "Transaction _Count"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [City] | Operator: IsAny | Value: []",
         "Key: [Customer Type] | Operator: IsAny | Value: []",
@@ -3700,9 +3898,10 @@
         }
       },
       "sql": [
-        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Transaction_Date\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1 WHERE Table__1.\"Customer_Name\" IN ('ABC Technologies','Capgemini','Accenture','Cognizant','Infosys Ltd','Reliance Retail')"
+        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1 WHERE Table__1.\"Customer_Name\" IN ('ABC Technologies','Capgemini','Accenture','Cognizant','Infosys Ltd','Reliance Retail')"
       ],
-      "collection_time_seconds": 2.63
+      "collection_time_seconds": 5.74,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 19305,
@@ -3719,9 +3918,7 @@
         "Membership _Level",
         "Payment _Method",
         "State",
-        "Transaction _Date",
         "Transaction _Id",
-        "p_x005F_Enter _value_x0028_s_x0029_ _for _Country",
         "p_x005F_Enter _value_x0028_s_x0029_ _for _Customer _Name",
         "p_x005F_Enter _value_x0028_s_x0029_ _for _Payment _Method"
       ],
@@ -3732,6 +3929,7 @@
         "Transaction _Amount",
         "Transaction _Count"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [City] | Operator: IsAny | Value: []",
         "Key: [Customer Type] | Operator: IsAny | Value: []",
@@ -3753,9 +3951,10 @@
         }
       },
       "sql": [
-        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Transaction_Date\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1 WHERE ( Table__1.\"Payment_Method\" IN ('Cash','Bank Transfer','Cheque','Credit Card','Debit Card','NEFT') AND Table__1.\"Customer_Name\" IN ('Accenture','ABC Technologies','Capgemini','Cognizant','HCL Technologies','Infosys Ltd','TCS','Wipro') )"
+        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1 WHERE ( Table__1.\"Payment_Method\" IN ('Cash','Bank Transfer','Cheque','Credit Card','Debit Card','NEFT') AND Table__1.\"Customer_Name\" IN ('Accenture','ABC Technologies','Capgemini','Cognizant','HCL Technologies','Infosys Ltd','TCS','Wipro') )"
       ],
-      "collection_time_seconds": 2.23
+      "collection_time_seconds": 5.7,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 19341,
@@ -3772,9 +3971,7 @@
         "Membership _Level",
         "Payment _Method",
         "State",
-        "Transaction _Date",
         "Transaction _Id",
-        "p_x005F_Enter _value_x0028_s_x0029_ _for _Country",
         "p_x005F_Enter _value_x0028_s_x0029_ _for _Customer _Name",
         "p_x005F_Enter _value_x0028_s_x0029_ _for _Membership _Level",
         "p_x005F_Enter _value_x0028_s_x0029_ _for _Payment _Method"
@@ -3786,6 +3983,7 @@
         "Transaction _Amount",
         "Transaction _Count"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [City] | Operator: IsAny | Value: []",
         "Key: [Customer Type] | Operator: IsAny | Value: []",
@@ -3806,9 +4004,10 @@
         }
       },
       "sql": [
-        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Transaction_Date\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1 WHERE ( Table__1.\"Payment_Method\" IN ('Cash','Bank Transfer','Cheque','Credit Card','Debit Card','NEFT') AND Table__1.\"Membership_Level\" IN ('Bronze','Gold') AND Table__1.\"Customer_Name\" IN ('Accenture','ABC Technologies','Capgemini','Cognizant','HCL Technologies','Infosys Ltd','TCS','Wipro') )"
+        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1 WHERE ( Table__1.\"Payment_Method\" IN ('Cash','Bank Transfer','Cheque','Credit Card','Debit Card','NEFT') AND Table__1.\"Membership_Level\" IN ('Bronze','Gold') AND Table__1.\"Customer_Name\" IN ('Accenture','ABC Technologies','Capgemini','Cognizant','HCL Technologies','Infosys Ltd','TCS','Wipro') )"
       ],
-      "collection_time_seconds": 2.74
+      "collection_time_seconds": 5.43,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 19344,
@@ -3825,9 +4024,7 @@
         "Membership _Level",
         "Payment _Method",
         "State",
-        "Transaction _Date",
         "Transaction _Id",
-        "p_x005F_Enter _value_x0028_s_x0029_ _for _Country",
         "p_x005F_Enter _value_x0028_s_x0029_ _for _Customer _Name",
         "p_x005F_Enter _value_x0028_s_x0029_ _for _Membership _Level",
         "p_x005F_Enter _value_x0028_s_x0029_ _for _Payment _Method",
@@ -3840,6 +4037,7 @@
         "Transaction _Amount",
         "Transaction _Count"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [City] | Operator: IsAny | Value: []",
         "Key: [Customer Type] | Operator: IsAny | Value: []",
@@ -3860,9 +4058,10 @@
         }
       },
       "sql": [
-        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Transaction_Date\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1 WHERE ( Table__1.\"Payment_Method\" IN ('Cash','Bank Transfer','Cheque','Credit Card','Debit Card','NEFT') AND Table__1.\"Membership_Level\" IN ('Bronze','Gold') AND Table__1.\"Transaction_ID\" IN ('TRX100001','TRX100002','TRX100003','TRX100004') AND Table__1.\"Customer_Name\" IN ('Accenture','ABC Technologies','Capgemini','Cognizant','HCL Technologies','Infosys Ltd','TCS','Wipro') )"
+        "SELECT Table__1.\"Transaction_ID\", Table__1.\"Customer_ID\", Table__1.\"Customer_Name\", Table__1.\"Customer_Type\", Table__1.\"City\", Table__1.\"State\", Table__1.\"Country\", Table__1.\"Payment_Method\", Table__1.\"Membership_Level\", Table__1.\"Transaction_Amount\", Table__1.\"Reward_Points\", Table__1.\"Cashback\", Table__1.\"Outstanding_Amount\", Table__1.\"Transaction_Count\" FROM \"INCSPACE\".\"Customer_Transactions_GV\" Table__1 WHERE ( Table__1.\"Payment_Method\" IN ('Cash','Bank Transfer','Cheque','Credit Card','Debit Card','NEFT') AND Table__1.\"Membership_Level\" IN ('Bronze','Gold') AND Table__1.\"Transaction_ID\" IN ('TRX100001','TRX100002','TRX100003','TRX100004') AND Table__1.\"Customer_Name\" IN ('Accenture','ABC Technologies','Capgemini','Cognizant','HCL Technologies','Infosys Ltd','TCS','Wipro') )"
       ],
-      "collection_time_seconds": 2.74
+      "collection_time_seconds": 5.72,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 19379,
@@ -3873,7 +4072,6 @@
       "dimensions": [
         "City",
         "Customer _Name",
-        "Delivery _Date",
         "Delivery _Id",
         "Delivery _Partner",
         "Delivery _Status",
@@ -3891,6 +4089,7 @@
         "Delivery _Time _Hours",
         "Distance _Km"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [Delivery Status] | Operator: IsAny | Value: []",
         "Key: [Vehicle Type] | Operator: IsAny | Value: []"
@@ -3906,9 +4105,10 @@
         }
       },
       "sql": [
-        "SELECT Table__1.\"Delivery_ID\", Table__1.\"Order_ID\", Table__1.\"Customer_Name\", Table__1.\"Region\", Table__1.\"City\", Table__1.\"Delivery_Partner\", Table__1.\"Vehicle_Type\", Table__1.\"Product_Category\", Table__1.\"Delivery_Status\", Table__1.\"Delivery_Date\", Table__1.\"Delivery_Time_Hours\", Table__1.\"Distance_KM\", Table__1.\"On_Time_Delivery_Flag\", Table__1.\"Customer_Rating\", Table__1.\"Delivery_Cost_USD\" FROM \"INCSPACE\".\"Delivery_Performance_GV\" Table__1 WHERE ( Table__1.\"Delivery_Partner\" IN ('Blue Dart','DHL','Delhivery','Ekart','Ecom Express','Xpressbees') AND Table__1.\"Region\" IN ('North','South','West','East') )"
+        "SELECT Table__1.\"Delivery_ID\", Table__1.\"Order_ID\", Table__1.\"Customer_Name\", Table__1.\"Region\", Table__1.\"City\", Table__1.\"Delivery_Partner\", Table__1.\"Vehicle_Type\", Table__1.\"Product_Category\", Table__1.\"Delivery_Status\", Table__1.\"Delivery_Time_Hours\", Table__1.\"Distance_KM\", Table__1.\"On_Time_Delivery_Flag\", Table__1.\"Customer_Rating\", Table__1.\"Delivery_Cost_USD\" FROM \"INCSPACE\".\"Delivery_Performance_GV\" Table__1 WHERE ( Table__1.\"Delivery_Partner\" IN ('Blue Dart','DHL','Delhivery','Ekart','Ecom Express','Xpressbees') AND Table__1.\"Region\" IN ('North','South','West','East') )"
       ],
-      "collection_time_seconds": 2.45
+      "collection_time_seconds": 4.41,
+      "recommended_target": "SAC Analyzer"
     },
     {
       "id": 19383,
@@ -3919,7 +4119,6 @@
       "dimensions": [
         "City",
         "Customer _Name",
-        "Delivery _Date",
         "Delivery _Id",
         "Delivery _Partner",
         "Delivery _Status",
@@ -3937,6 +4136,7 @@
         "Delivery _Time _Hours",
         "Distance _Km"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [City] | Operator: IsAny | Value: []",
         "Key: [Delivery Status] | Operator: IsAny | Value: []",
@@ -3957,9 +4157,10 @@
         }
       },
       "sql": [
-        "SELECT Table__1.\"Delivery_ID\", Table__1.\"Order_ID\", Table__1.\"Customer_Name\", Table__1.\"Region\", Table__1.\"City\", Table__1.\"Delivery_Partner\", Table__1.\"Vehicle_Type\", Table__1.\"Product_Category\", Table__1.\"Delivery_Status\", Table__1.\"Delivery_Date\", Table__1.\"Delivery_Time_Hours\", Table__1.\"Distance_KM\", Table__1.\"On_Time_Delivery_Flag\", Table__1.\"Customer_Rating\", Table__1.\"Delivery_Cost_USD\" FROM \"INCSPACE\".\"Delivery_Performance_GV\" Table__1 WHERE ( Table__1.\"Delivery_Partner\" IN ('Blue Dart','DHL','Delhivery','Ekart','Ecom Express','Xpressbees') AND Table__1.\"Region\" IN ('North','South','West','East') )"
+        "SELECT Table__1.\"Delivery_ID\", Table__1.\"Order_ID\", Table__1.\"Customer_Name\", Table__1.\"Region\", Table__1.\"City\", Table__1.\"Delivery_Partner\", Table__1.\"Vehicle_Type\", Table__1.\"Product_Category\", Table__1.\"Delivery_Status\", Table__1.\"Delivery_Time_Hours\", Table__1.\"Distance_KM\", Table__1.\"On_Time_Delivery_Flag\", Table__1.\"Customer_Rating\", Table__1.\"Delivery_Cost_USD\" FROM \"INCSPACE\".\"Delivery_Performance_GV\" Table__1 WHERE ( Table__1.\"Delivery_Partner\" IN ('Blue Dart','DHL','Delhivery','Ekart','Ecom Express','Xpressbees') AND Table__1.\"Region\" IN ('North','South','West','East') )"
       ],
-      "collection_time_seconds": 3.65
+      "collection_time_seconds": 2.24,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 19385,
@@ -3970,7 +4171,6 @@
       "dimensions": [
         "City",
         "Customer _Name",
-        "Delivery _Date",
         "Delivery _Id",
         "Delivery _Partner",
         "Delivery _Status",
@@ -3988,6 +4188,7 @@
         "Delivery _Time _Hours",
         "Distance _Km"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [City] | Operator: IsAny | Value: []",
         "Key: [Delivery Status] | Operator: IsAny | Value: []",
@@ -4012,9 +4213,10 @@
         }
       },
       "sql": [
-        "SELECT Table__1.\"Delivery_ID\", Table__1.\"Order_ID\", Table__1.\"Customer_Name\", Table__1.\"Region\", Table__1.\"City\", Table__1.\"Delivery_Partner\", Table__1.\"Vehicle_Type\", Table__1.\"Product_Category\", Table__1.\"Delivery_Status\", Table__1.\"Delivery_Date\", Table__1.\"Delivery_Time_Hours\", Table__1.\"Distance_KM\", Table__1.\"On_Time_Delivery_Flag\", Table__1.\"Customer_Rating\", Table__1.\"Delivery_Cost_USD\" FROM \"INCSPACE\".\"Delivery_Performance_GV\" Table__1 WHERE ( Table__1.\"Delivery_Partner\" IN ('Blue Dart','DHL','Delhivery','Ekart','Ecom Express','Xpressbees') AND Table__1.\"Region\" IN ('North','South','West','East') )"
+        "SELECT Table__1.\"Delivery_ID\", Table__1.\"Order_ID\", Table__1.\"Customer_Name\", Table__1.\"Region\", Table__1.\"City\", Table__1.\"Delivery_Partner\", Table__1.\"Vehicle_Type\", Table__1.\"Product_Category\", Table__1.\"Delivery_Status\", Table__1.\"Delivery_Time_Hours\", Table__1.\"Distance_KM\", Table__1.\"On_Time_Delivery_Flag\", Table__1.\"Customer_Rating\", Table__1.\"Delivery_Cost_USD\" FROM \"INCSPACE\".\"Delivery_Performance_GV\" Table__1 WHERE ( Table__1.\"Delivery_Partner\" IN ('Blue Dart','DHL','Delhivery','Ekart','Ecom Express','Xpressbees') AND Table__1.\"Region\" IN ('North','South','West','East') )"
       ],
-      "collection_time_seconds": 2.33
+      "collection_time_seconds": 3.04,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 19387,
@@ -4025,7 +4227,6 @@
       "dimensions": [
         "City",
         "Customer _Name",
-        "Delivery _Date",
         "Delivery _Id",
         "Delivery _Partner",
         "Delivery _Status",
@@ -4043,6 +4244,7 @@
         "Delivery _Time _Hours",
         "Distance _Km"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [City] | Operator: IsAny | Value: []",
         "Key: [Delivery Status] | Operator: IsAny | Value: []",
@@ -4071,9 +4273,10 @@
         }
       },
       "sql": [
-        "SELECT Table__1.\"Delivery_ID\", Table__1.\"Order_ID\", Table__1.\"Customer_Name\", Table__1.\"Region\", Table__1.\"City\", Table__1.\"Delivery_Partner\", Table__1.\"Vehicle_Type\", Table__1.\"Product_Category\", Table__1.\"Delivery_Status\", Table__1.\"Delivery_Date\", Table__1.\"Delivery_Time_Hours\", Table__1.\"Distance_KM\", Table__1.\"On_Time_Delivery_Flag\", Table__1.\"Customer_Rating\", Table__1.\"Delivery_Cost_USD\" FROM \"INCSPACE\".\"Delivery_Performance_GV\" Table__1 WHERE ( Table__1.\"Delivery_Partner\" IN ('Blue Dart','DHL','Delhivery','Ekart','Ecom Express','Xpressbees') AND Table__1.\"Region\" IN ('North','South','West','East') )"
+        "SELECT Table__1.\"Delivery_ID\", Table__1.\"Order_ID\", Table__1.\"Customer_Name\", Table__1.\"Region\", Table__1.\"City\", Table__1.\"Delivery_Partner\", Table__1.\"Vehicle_Type\", Table__1.\"Product_Category\", Table__1.\"Delivery_Status\", Table__1.\"Delivery_Time_Hours\", Table__1.\"Distance_KM\", Table__1.\"On_Time_Delivery_Flag\", Table__1.\"Customer_Rating\", Table__1.\"Delivery_Cost_USD\" FROM \"INCSPACE\".\"Delivery_Performance_GV\" Table__1 WHERE ( Table__1.\"Delivery_Partner\" IN ('Blue Dart','DHL','Delhivery','Ekart','Ecom Express','Xpressbees') AND Table__1.\"Region\" IN ('North','South','West','East') )"
       ],
-      "collection_time_seconds": 2.84
+      "collection_time_seconds": 3.25,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 19409,
@@ -4084,7 +4287,6 @@
       "dimensions": [
         "City",
         "Customer _Name",
-        "Delivery _Date",
         "Delivery _Id",
         "Delivery _Partner",
         "Delivery _Status",
@@ -4102,6 +4304,7 @@
         "Delivery _Time _Hours",
         "Distance _Km"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [City] | Operator: IsAny | Value: []",
         "Key: [Delivery Status] | Operator: IsAny | Value: []",
@@ -4122,9 +4325,10 @@
         }
       },
       "sql": [
-        "SELECT Table__1.\"Delivery_ID\", Table__1.\"Order_ID\", Table__1.\"Customer_Name\", Table__1.\"Region\", Table__1.\"City\", Table__1.\"Delivery_Partner\", Table__1.\"Vehicle_Type\", Table__1.\"Product_Category\", Table__1.\"Delivery_Status\", Table__1.\"Delivery_Date\", Table__1.\"Delivery_Time_Hours\", Table__1.\"Distance_KM\", Table__1.\"On_Time_Delivery_Flag\", Table__1.\"Customer_Rating\", Table__1.\"Delivery_Cost_USD\" FROM \"INCSPACE\".\"Delivery_Performance_GV\" Table__1 WHERE ( Table__1.\"Delivery_Partner\" IN ('Blue Dart','DHL','Delhivery','Ekart','Ecom Express','Xpressbees') AND Table__1.\"Region\" IN ('North','South','West','East') )"
+        "SELECT Table__1.\"Delivery_ID\", Table__1.\"Order_ID\", Table__1.\"Customer_Name\", Table__1.\"Region\", Table__1.\"City\", Table__1.\"Delivery_Partner\", Table__1.\"Vehicle_Type\", Table__1.\"Product_Category\", Table__1.\"Delivery_Status\", Table__1.\"Delivery_Time_Hours\", Table__1.\"Distance_KM\", Table__1.\"On_Time_Delivery_Flag\", Table__1.\"Customer_Rating\", Table__1.\"Delivery_Cost_USD\" FROM \"INCSPACE\".\"Delivery_Performance_GV\" Table__1 WHERE ( Table__1.\"Delivery_Partner\" IN ('Blue Dart','DHL','Delhivery','Ekart','Ecom Express','Xpressbees') AND Table__1.\"Region\" IN ('North','South','West','East') )"
       ],
-      "collection_time_seconds": 2.36
+      "collection_time_seconds": 2.53,
+      "recommended_target": "SAC Stories"
     },
     {
       "id": 19291,
@@ -4135,7 +4339,6 @@
       "dimensions": [
         "City",
         "Customer _Name",
-        "Delivery _Date",
         "Delivery _Id",
         "Delivery _Partner",
         "Delivery _Status",
@@ -4153,6 +4356,7 @@
         "Delivery _Time _Hours",
         "Distance _Km"
       ],
+      "hierarchies": [],
       "filters": [
         "Key: [City] | Operator: IsAny | Value: []",
         "Key: [Delivery Status] | Operator: IsAny | Value: []",
@@ -4173,9 +4377,93 @@
         }
       },
       "sql": [
-        "SELECT Table__1.\"Delivery_ID\", Table__1.\"Order_ID\", Table__1.\"Customer_Name\", Table__1.\"Region\", Table__1.\"City\", Table__1.\"Delivery_Partner\", Table__1.\"Vehicle_Type\", Table__1.\"Product_Category\", Table__1.\"Delivery_Status\", Table__1.\"Delivery_Date\", Table__1.\"Delivery_Time_Hours\", Table__1.\"Distance_KM\", Table__1.\"On_Time_Delivery_Flag\", Table__1.\"Customer_Rating\", Table__1.\"Delivery_Cost_USD\" FROM \"INCSPACE\".\"Delivery_Performance_GV\" Table__1 WHERE ( Table__1.\"Delivery_Partner\" IN ('Blue Dart','DHL','Delhivery','Ekart','Ecom Express','Xpressbees') AND Table__1.\"Region\" IN ('North','South','West','East') )"
+        "SELECT Table__1.\"Delivery_ID\", Table__1.\"Order_ID\", Table__1.\"Customer_Name\", Table__1.\"Region\", Table__1.\"City\", Table__1.\"Delivery_Partner\", Table__1.\"Vehicle_Type\", Table__1.\"Product_Category\", Table__1.\"Delivery_Status\", Table__1.\"Delivery_Time_Hours\", Table__1.\"Distance_KM\", Table__1.\"On_Time_Delivery_Flag\", Table__1.\"Customer_Rating\", Table__1.\"Delivery_Cost_USD\" FROM \"INCSPACE\".\"Delivery_Performance_GV\" Table__1 WHERE ( Table__1.\"Delivery_Partner\" IN ('Blue Dart','DHL','Delhivery','Ekart','Ecom Express','Xpressbees') AND Table__1.\"Region\" IN ('North','South','West','East') )"
       ],
-      "collection_time_seconds": 2.19
+      "collection_time_seconds": 2.57,
+      "recommended_target": "SAC Stories"
+    }
+  ],
+  "/~WebIntelligence": [
+    {
+      "id": 48209,
+      "name": "Complex Functionality check Report - 0",
+      "cuid": "AVqln2DpR1VBlktkeSO5lKM",
+      "kind": "Web Intelligence",
+      "folder_path": "/~WebIntelligence",
+      "dimensions": [],
+      "measures": [],
+      "hierarchies": [
+        "Area: Country -> State -> City"
+      ],
+      "filters": [],
+      "variables": {},
+      "dataproviders": [
+        "unx"
+      ],
+      "visualizations": {
+        "Report 1": {
+          "visualizations": 0,
+          "tables": 3
+        }
+      },
+      "sql": [
+        "SELECT Table__1.\"Sales\", Table__1.\"Quantity\", Table__1.\"Product\", Table__1.\"Year\", Table__1.\"Country\", Table__1.\"State\", Table__1.\"City\" FROM \"INCSPACE01\".\"Drill_GV\" Table__1"
+      ],
+      "collection_time_seconds": 2.44,
+      "recommended_target": "SAC Analyzer"
+    },
+    {
+      "id": 48060,
+      "name": "Customer Behaviour - 48060",
+      "cuid": "AfSklK7vgHVJl97P0e4lR.U",
+      "kind": "Web Intelligence",
+      "folder_path": "/~WebIntelligence",
+      "dimensions": [
+        "Code",
+        "Name _Of _The _Campaign",
+        "Uid"
+      ],
+      "measures": [
+        "Campaign _Driven _Count",
+        "Campaign _driven _Percentage",
+        "Cart _Initiation _Rate",
+        "Click _Through _Rate",
+        "Opened",
+        "Total _Clicked",
+        "Total_x005F_Carts"
+      ],
+      "hierarchies": [],
+      "filters": [],
+      "variables": {
+        "Campaign driven Percentage": "=Round(([Query 4].[Campaign Driven Count]/[Total_Carts])*100 ;0)",
+        "Cart Initiation Rate": "=Round(( [Distinct users] / [Total users] ) * 100 ; 0)",
+        "Cart Modified Rate per Cart": "=[??DP6.DO2b??]/[??DP6.DO2a??]",
+        "Click Through Rate": "=Round([Total Clicked] / [Opened] * 100 ;0)",
+        "Distinct users": "=Count(If(Not(IsNull([Code]))) Then [Uid])",
+        "Total users": "=Count([Code])"
+      },
+      "dataproviders": [
+        "unx"
+      ],
+      "visualizations": {
+        "Report 1": {
+          "visualizations": 6,
+          "tables": 1
+        },
+        "Report 2": {
+          "visualizations": 0,
+          "tables": 2
+        }
+      },
+      "sql": [
+        "( SELECT 0 AS GID, Sum(Table__1.\"Campaign_driven_count\") FROM \"INCSPACE\".\"Prepurchase_1_GV\" Table__1 )",
+        "( SELECT 0 AS GID, Sum(Table__1.\"totalClicked\"), Sum(Table__1.\"opened\") FROM \"INCSPACE\".\"Prepurchase_1_GV\" Table__1 )",
+        "SELECT Table__1.\"Name_of_the_campaign\", Sum(Table__1.\"Campaign_driven_count\") FROM \"INCSPACE\".\"Prepurchase_1_GV\" Table__1 GROUP BY Table__1.\"Name_of_the_campaign\"",
+        "SELECT Table__1.\"code\" FROM \"INCSPACE\".\"Prepurchase_1_GV\" Table__1 WHERE ( Table__1.\"code\" is not null )",
+        "SELECT Table__1.\"uid\", Table__1.\"code\" FROM \"INCSPACE\".\"Prepurchase_1_GV\" Table__1"
+      ],
+      "collection_time_seconds": 3.93,
+      "recommended_target": "SAC Stories"
     }
   ]
 }

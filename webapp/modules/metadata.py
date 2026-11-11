@@ -29,6 +29,8 @@ from modules.variables import fetch_variables
 from modules.path import build_folder_map, get_report_folder_path
 from modules.visualizations import fetch_visualization_counts
 from modules.datafilters import fetch_doc_filters
+from modules.hierarchies import fetch_hierarchies
+from modules.report_target import get_recommended_target
 
 # ============================================
 # CRAWL PROGRESS & TIMING TRACKING
@@ -326,9 +328,14 @@ def evaluate_single_webi_report(session, doc, folder_path):
     except Exception:
         sql_queries = []
 
+    try:
+        hierarchies = fetch_hierarchies(session, doc_id)
+    except Exception:
+        hierarchies = []
+
     duration = round(time.time() - t_start, 2)
 
-    return {
+    rep_data = {
         "id": doc_id,
         "name": doc.get("name"),
         "cuid": cuid,
@@ -336,6 +343,7 @@ def evaluate_single_webi_report(session, doc, folder_path):
         "folder_path": folder_path,
         "dimensions": dims,
         "measures": measures,
+        "hierarchies": hierarchies,
         "filters": filters,
         "variables": variables,
         "dataproviders": dataproviders,
@@ -343,6 +351,8 @@ def evaluate_single_webi_report(session, doc, folder_path):
         "sql": sql_queries,
         "collection_time_seconds": duration,
     }
+    rep_data["recommended_target"] = get_recommended_target(rep_data)
+    return rep_data
 
 
 # ============================================
